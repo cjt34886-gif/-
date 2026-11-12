@@ -838,3 +838,99 @@
     animation: none;
   }
 }
+
+.app-icon-wrap:has(.app-friend-badge) {
+  position: relative;
+}
+.app-friend-badge,
+.wx-request-badge {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fa5151;
+  color: #fff;
+  font: 600 12px/1 system-ui;
+}
+.app-friend-badge {
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  right: -5px;
+}
+.ios18 .wechat-ui .wx-bottom button {
+  position: relative;
+}
+.wx-contacts-unread {
+  position: absolute;
+  top: 3px;
+  left: calc(50% + 10px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fa5151;
+}
+.wx-new-friends-icon {
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
+  border-radius: 5px;
+  background: #fa9d3b;
+  color: #fff;
+}
+.wx-new-friends .wx-request-badge {
+  margin-left: auto;
+}
+.ios18 .wechat-ui .wx-friend-requests {
+  background: #ededed;
+}
+.wx-friend-request {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  color: #111;
+}
+.wx-friend-request > .skin-avatar {
+  flex: 0 0 46px;
+  height: 46px;
+}
+.wx-request-info {
+  flex: 1;
+  min-width: 0;
+}
+.wx-request-info strong {
+  font-size: 16px;
+}
+.wx-request-info p,
+.wx-request-info time {
+  margin: 4px 0 0;
+  color: #757575;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.wx-request-accept {
+  flex: none;
+  padding: 6px 13px;
+  border-radius: 5px;
+  background: #07c160;
+  color: #fff;
+  font-size: 14px;
+}
+.wx-request-accept:disabled {
+  background: transparent;
+  color: #858585;
+}
+.ios18 .wechat-ui .wx-nav > strong:has(.skin-avatar) {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.ios18 .wechat-ui .wx-nav > strong > .skin-avatar {
+  width: 22px;
+  height: 22px;
+}

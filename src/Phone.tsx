@@ -71,6 +71,7 @@ export function AppIcon({
   custom = "",
   date,
   time,
+  badge = false,
 }: {
   id: string;
   name?: string;
@@ -78,6 +79,7 @@ export function AppIcon({
   custom?: string;
   date?: string;
   time?: string;
+  badge?: boolean;
 }) {
   const a = getApp(id);
   const Icon = a.icon;
@@ -96,6 +98,11 @@ export function AppIcon({
           <Icon size={small ? 21 : 28} strokeWidth={1.65} />
         )}
       </span>
+      {badge && (
+        <span className="app-friend-badge" aria-label="1 条新好友申请">
+          1
+        </span>
+      )}
       {name && <span className="app-name">{name}</span>}
     </span>
   );
@@ -189,6 +196,33 @@ function PhoneRuntime({
     };
   }, [creator, ready]);
   const s = external ?? own;
+  const [requestClock, setRequestClock] = useState(Date.now);
+  const configuredRequest = !creator
+    ? work.data.wechat?.find((item) => item.meta.friendRequest === "true")
+    : undefined;
+  const prerequisite =
+    configuredRequest &&
+    s.ui?.wechat?.[configuredRequest.meta.afterConversation];
+  // The second follow-up arrives 2.5 seconds after the player's final reply.
+  const requestDue =
+    typeof prerequisite === "number" && prerequisite < -1
+      ? -prerequisite + 2500
+      : 0;
+  useEffect(() => {
+    if (!requestDue) return;
+    const timer = window.setTimeout(
+      () => setRequestClock(Date.now()),
+      Math.max(0, requestDue - Date.now()),
+    );
+    return () => window.clearTimeout(timer);
+  }, [requestDue]);
+  const friendRequest =
+    requestDue && Math.max(requestClock, Date.now()) >= requestDue
+      ? configuredRequest
+      : undefined;
+  const unreadFriendRequest =
+    !!friendRequest && !s.ui?.wechat?.[friendRequest.id + ":seen"];
+
   const runtimeRef = useRef(s);
   runtimeRef.current = s;
   const update = (next: Runtime) => {
@@ -475,6 +509,7 @@ function PhoneRuntime({
                   ]}
                   creator={creator}
                   state={s}
+                  friendRequest={app === "wechat" ? friendRequest : undefined}
                   onRead={(id) => event("read", id)}
                   onEdit={(item) => onEdit?.(app, item)}
                   onAdd={() => onAdd?.(app)}
@@ -525,6 +560,7 @@ function PhoneRuntime({
                     custom={a.icon}
                     date={s.date || work.phone.date}
                     time={s.time}
+                    badge={a.id === "wechat" && !small && unreadFriendRequest}
                   />
                 )}
                 clearApp={(id) =>
@@ -548,7 +584,12 @@ function PhoneRuntime({
                   .filter((a) => a.folder === folder)
                   .map((a) => (
                     <button key={a.id} onClick={() => open(a.id)}>
-                      <AppIcon id={a.id} name={a.name} custom={a.icon} />
+                      <AppIcon
+                        id={a.id}
+                        name={a.name}
+                        custom={a.icon}
+                        badge={a.id === "wechat" && unreadFriendRequest}
+                      />
                     </button>
                   ))}
               </div>
@@ -883,6 +924,7 @@ function AppContent({
   items,
   creator,
   state,
+  friendRequest,
   onRead,
   onEdit,
   onAdd,
@@ -896,6 +938,7 @@ function AppContent({
   items: Item[];
   creator: boolean;
   state: Runtime;
+  friendRequest?: Item;
   onRead: (id: string) => void;
   onEdit: (item: Item) => void;
   onAdd: () => void;
@@ -1014,6 +1057,7 @@ function AppContent({
               ownerAvatar={work.phone.ownerAvatar}
               wechatName={work.phone.wechatName}
               wechatId={work.phone.wechatId}
+              friendRequest={friendRequest}
               contacts={work.data.contacts?.filter(
                 (item) => item.meta.wechat === "true",
               )}

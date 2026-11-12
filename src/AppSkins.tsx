@@ -41,6 +41,7 @@ export type SkinProps = {
   ownerAvatar?: string;
   wechatName?: string;
   wechatId?: string;
+  friendRequest?: Item;
   contacts?: Item[];
   virtualTime?: string;
   name: string;
@@ -256,16 +257,31 @@ export function WeChatSkin(props: SkinProps) {
     followupCount && elapsed - recentArrival < 300
       ? script[visibleCount - 1]?.id
       : undefined;
+  const request = p.friendRequest;
+  const requestName =
+    request?.meta.remark || request?.meta.nickname || request?.title;
+  const requestUnread = !!request && p.ui?.[request.id + ":seen"] !== true;
+  const accepted = !!request && p.ui?.[request.id + ":accepted"] === true;
+  const friendName = accepted ? requestName : undefined;
+  const openRequests = () => {
+    setUtility("新的朋友");
+    if (requestUnread && request) p.onUi?.(request.id + ":seen", true);
+  };
+  useEffect(() => {
+    if (utility === "新的朋友" && requestUnread && request)
+      p.onUi?.(request.id + ":seen", true);
+  }, [utility, requestUnread, request, p.onUi]);
   const conversations = [
     ...new Set(
       p.items
-        .filter((i) => !["朋友圈", "我"].includes(i.folder))
+        .filter((i) => !["朋友圈", "我", "新的朋友"].includes(i.folder))
         .map((i) => i.title),
     ),
   ];
   const contacts = [
     ...new Set([
       ...p.items
+        .filter((i) => i.meta.friendRequest !== "true")
         .map((i) => i.sender)
         .filter((s) => s !== "我" && s !== p.owner),
       ...(p.contacts ?? []).map((item) => item.title),
@@ -323,8 +339,11 @@ export function WeChatSkin(props: SkinProps) {
                 : tab === "微信"
                   ? p.name
                   : tab)}
+          {friendName && p.thread === friendName && !utility && (
+            <Avatar name={friendName} src={request?.avatar} />
+          )}
         </strong>
-        {moments && !p.creator ? (
+        {(moments || utility === "新的朋友") && !p.creator ? (
           <span aria-hidden="true" />
         ) : (
           <button
@@ -365,10 +384,40 @@ export function WeChatSkin(props: SkinProps) {
           ))}
         </div>
       )}
-      {utility ? (
+      {utility === "新的朋友" ? (
+        <div className="skin-scroll wx-friend-requests">
+          {request && requestName ? (
+            <div className="wx-friend-request">
+              <Avatar name={requestName} src={request.avatar} />
+              <div className="wx-request-info">
+                <strong>{requestName}</strong>
+                <p>{request.body}</p>
+                <time dateTime={request.time.replace(" ", "T")}>
+                  {request.time.slice(-5)}
+                </time>
+              </div>
+              <button
+                className="wx-request-accept"
+                disabled={accepted}
+                onClick={() => p.onUi?.(request.id + ":accepted", true)}
+              >
+                {accepted ? "已添加" : "接受"}
+              </button>
+            </div>
+          ) : (
+            <p className="skin-empty">暂无好友申请</p>
+          )}
+        </div>
+      ) : utility ? (
         <div className="skin-scroll wx-utility">
           {utility === "聊天信息" && (
             <div className="wx-members">
+              {friendName && p.thread === friendName && (
+                <div>
+                  <Avatar name={friendName} src={request?.avatar} />
+                  <small>{friendName}</small>
+                </div>
+              )}
               {[
                 ...new Set(
                   p.items
@@ -404,7 +453,9 @@ export function WeChatSkin(props: SkinProps) {
       ) : p.thread ? (
         <>
           <MessageList
-            items={p.items.filter((i) => i.title === p.thread)}
+            items={p.items.filter(
+              (i) => i.title === p.thread && i.meta.friendRequest !== "true",
+            )}
             creator={p.creator}
             onItem={p.onItem}
             onRead={p.onRead}
@@ -542,11 +593,47 @@ export function WeChatSkin(props: SkinProps) {
                     </button>
                   );
                 })}
-              {!conversations.length && <p className="skin-empty">暂无聊天</p>}
+              {friendName &&
+                friendName.includes(query) &&
+                !conversations.includes(friendName) && (
+                  <button
+                    className="wx-chat-row"
+                    onClick={() => p.onThread(friendName)}
+                  >
+                    <span className="wx-chat-avatar">
+                      <Avatar name={friendName} src={request?.avatar} />
+                    </span>
+                    <div>
+                      <strong>{friendName}</strong>
+                    </div>
+                  </button>
+                )}
+              {!conversations.length && !friendName && (
+                <p className="skin-empty">暂无聊天</p>
+              )}
             </>
           ) : tab === "通讯录" ? (
             <>
+              <button
+                className="wx-contact wx-new-friends"
+                onClick={openRequests}
+              >
+                <span className="wx-new-friends-icon">
+                  <Users size={21} />
+                </span>
+                新的朋友
+                {requestUnread && <b className="wx-request-badge">1</b>}
+              </button>
               <div className="wx-section-label">联系人</div>
+              {friendName && !contacts.includes(friendName) && (
+                <button
+                  className="wx-contact"
+                  onClick={() => p.onThread(friendName)}
+                >
+                  <Avatar name={friendName} src={request?.avatar} />
+                  {friendName}
+                </button>
+              )}
               {contacts.map((c) => (
                 <button
                   key={c}
@@ -675,6 +762,9 @@ export function WeChatSkin(props: SkinProps) {
             >
               <t.icon size={21} />
               <span>{t.label}</span>
+              {requestUnread && t.label === "通讯录" && (
+                <b className="wx-contacts-unread" aria-label="新好友申请" />
+              )}
             </button>
           ))}
         </nav>
