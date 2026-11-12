@@ -95,6 +95,7 @@ export const workSchema = z.object({
   updatedAt: z.number(),
   phone: z.object({
     owner: z.string(),
+    ownerAvatar: z.string().optional(),
     date: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/)

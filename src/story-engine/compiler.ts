@@ -33,6 +33,7 @@ export const storySchema = z
       .partial()
       .extend({
         owner: z.string(),
+        ownerAvatar: z.string().optional(),
         date: z
           .string()
           .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -116,6 +117,10 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
     if (names.has(v)) fail(p, "重复 ID: " + v);
     names.add(v);
   };
+  if (s.phone.ownerAvatar && !safeMedia(s.phone.ownerAvatar))
+    fail("phone.ownerAvatar", "无效头像");
+  if (s.phone.wallpaper?.startsWith("data:") && !safeMedia(s.phone.wallpaper))
+    fail("phone.wallpaper", "无效壁纸");
   const contacts = new Map(s.contacts.map((c) => [c.id, c]));
   s.contacts.forEach((c, i) => unique(c.id, `contacts.${i}.id`));
   const configuredIds = s.installedApps.map((a) =>

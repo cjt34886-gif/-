@@ -318,7 +318,12 @@ function PhoneRuntime({
     >
       <KeyboardContext.Provider value={setKeyboard}>
         <div
-          className={`phone-screen wallpaper-${work.phone.wallpaper} ${locked ? "is-locked" : ""} ${app ? "in-app" : ""} ${keyboard ? "keyboard-open" : ""}`}
+          style={
+            /^data:image\/(png|jpeg|webp|gif);base64,[a-zA-Z0-9+/=]+$/.test(work.phone.wallpaper)
+              ? { backgroundImage: `url("${work.phone.wallpaper}")` }
+              : undefined
+          }
+          className={`phone-screen wallpaper-${work.phone.wallpaper.startsWith("data:") ? "custom" : work.phone.wallpaper} ${locked ? "is-locked" : ""} ${app ? "in-app" : ""} ${keyboard ? "keyboard-open" : ""}`}
           data-app={app}
           onDragStart={(e) => e.preventDefault()}
           onPointerDown={(e) => {
@@ -988,6 +993,8 @@ function AppContent({
             <Skin
               appId={app.id}
               owner={work.phone.owner}
+              ownerAvatar={work.phone.ownerAvatar}
+              contacts={work.data.contacts?.filter((item) => item.meta.wechat === "true")}
               virtualTime={state.time}
               ui={state.ui?.[app.id]}
               onUi={creator ? undefined : onUi}

@@ -741,3 +741,18 @@
   background: #fafafa;
   color: #ffadb7;
 }
+
+.ios18 .wallpaper-custom {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.ios18 .wallpaper-custom .wallpaper-orb {
+  display: none;
+}
+.ios18 .wallpaper-custom:not(.in-app) .status-bar,
+.ios18 .wallpaper-custom .lock-clock-block,
+.ios18 .wallpaper-custom .app-name {
+  color: #18181b;
+  text-shadow: 0 1px 3px #fffd;
+}
