@@ -96,6 +96,7 @@ export const workSchema = z.object({
   phone: z.object({
     owner: z.string(),
     ownerAvatar: z.string().optional(),
+    wechatName: z.string().optional(),
     date: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/)

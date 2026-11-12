@@ -319,7 +319,9 @@ function PhoneRuntime({
       <KeyboardContext.Provider value={setKeyboard}>
         <div
           style={
-            /^data:image\/(png|jpeg|webp|gif);base64,[a-zA-Z0-9+/=]+$/.test(work.phone.wallpaper)
+            /^data:image\/(png|jpeg|webp|gif);base64,[a-zA-Z0-9+/=]+$/.test(
+              work.phone.wallpaper,
+            )
               ? { backgroundImage: `url("${work.phone.wallpaper}")` }
               : undefined
           }
@@ -994,7 +996,10 @@ function AppContent({
               appId={app.id}
               owner={work.phone.owner}
               ownerAvatar={work.phone.ownerAvatar}
-              contacts={work.data.contacts?.filter((item) => item.meta.wechat === "true")}
+              wechatName={work.phone.wechatName}
+              contacts={work.data.contacts?.filter(
+                (item) => item.meta.wechat === "true",
+              )}
               virtualTime={state.time}
               ui={state.ui?.[app.id]}
               onUi={creator ? undefined : onUi}

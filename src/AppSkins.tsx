@@ -1,6 +1,7 @@
 import { NativeComposer } from "./DeviceSystem";
 import { useSkinState } from "./skinState";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ScriptedWeChatComposer } from "./ScriptedWeChatComposer";
 import {
   ChevronLeft,
   Plus,
@@ -38,6 +39,7 @@ export type SkinProps = {
   appId?: string;
   owner?: string;
   ownerAvatar?: string;
+  wechatName?: string;
   contacts?: Item[];
   virtualTime?: string;
   name: string;
@@ -54,15 +56,19 @@ function Avatar({
   name,
   round = false,
   src = "",
+  neutral = false,
 }: {
   name: string;
   round?: boolean;
   src?: string;
+  neutral?: boolean;
 }) {
   return (
     <span className={`skin-avatar ${round ? "round" : ""}`}>
       {safeMedia(src)?.startsWith("data:image/") ? (
         <img src={safeMedia(src)} alt="" />
+      ) : neutral ? (
+        <User size={23} aria-hidden="true" />
       ) : (
         name.slice(0, 1)
       )}
@@ -91,15 +97,33 @@ function MessageList({
   onItem,
   onRead,
   whatsapp = false,
+  follow = false,
 }: {
   items: Item[];
   creator: boolean;
   onItem: (i: Item) => void;
   onRead: (id: string) => void;
   whatsapp?: boolean;
+  follow?: boolean;
 }) {
+  const scroll = useRef<HTMLDivElement>(null);
+  const latest = items.at(-1)?.id;
+  useLayoutEffect(() => {
+    const list = scroll.current;
+    if (!follow || !list) return;
+    const bottom = () => {
+      list.scrollTop = list.scrollHeight;
+    };
+    bottom();
+    const observer = new ResizeObserver(bottom);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [follow, latest]);
   return (
-    <div className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}>
+    <div
+      ref={scroll}
+      className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}
+    >
       <div className="skin-date">{items[0]?.time.slice(0, 10)}</div>
       {items.map((i) => (
         <div
@@ -107,7 +131,7 @@ function MessageList({
           className={`skin-message ${i.outgoing ? "outgoing" : ""}`}
         >
           {!whatsapp && !i.outgoing && (
-            <Avatar name={i.sender} src={i.avatar} />
+            <Avatar name={i.sender} src={i.avatar} neutral={follow} />
           )}
           <button
             className="skin-bubble"
@@ -153,7 +177,57 @@ function Compose({
     </div>
   );
 }
-export function WeChatSkin(p: SkinProps) {
+export function WeChatSkin(props: SkinProps) {
+  const script = props.creator
+    ? []
+    : props.items.filter((item) => item.meta.scriptedReply === "true");
+  const storyKey = script[0]?.meta.conversationId ?? "scriptedReply";
+  const [sentAt, setSentAt] = useSkinState<number>(props, storyKey, 0);
+  const [now, setNow] = useState(Date.now);
+  const firstArrival = sentAt + 1000;
+  const secondArrival = firstArrival + 1500;
+  useEffect(() => {
+    if (sentAt <= 0) return;
+    const timers = [firstArrival, secondArrival].map((arrival) =>
+      window.setTimeout(
+        () => setNow(Date.now()),
+        Math.max(0, arrival - Date.now()),
+      ),
+    );
+    return () => timers.forEach(window.clearTimeout);
+  }, [sentAt, firstArrival, secondArrival]);
+  const elapsed = Math.max(now, sentAt);
+  const visibleCount =
+    sentAt === -1
+      ? 5
+      : sentAt === 0
+        ? 1
+        : elapsed >= secondArrival
+          ? 4
+          : elapsed >= firstArrival
+            ? 3
+            : 2;
+  const scriptedThread = !!script.length && props.thread === script[0].title;
+  const reply =
+    scriptedThread && script[visibleCount]?.outgoing
+      ? script[visibleCount].body
+      : undefined;
+  const visible = new Set(script.slice(0, visibleCount).map((item) => item.id));
+  const p = script.length
+    ? {
+        ...props,
+        items: props.items
+          .filter(
+            (item) =>
+              item.meta.scriptedReply !== "true" || visible.has(item.id),
+          )
+          .map((item) =>
+            visible.has(item.id) && item.outgoing
+              ? { ...item, avatar: props.ownerAvatar ?? "" }
+              : item,
+          ),
+      }
+    : props;
   const [tab, setTab] = useState("微信"),
     [query, setQuery] = useState(""),
     [moments, setMoments] = useState(false),
@@ -174,7 +248,9 @@ export function WeChatSkin(p: SkinProps) {
   ];
   const contacts = [
     ...new Set([
-      ...p.items.map((i) => i.sender).filter((s) => s !== "我" && s !== p.owner),
+      ...p.items
+        .map((i) => i.sender)
+        .filter((s) => s !== "我" && s !== p.owner),
       ...(p.contacts ?? []).map((item) => item.title),
     ]),
   ];
@@ -287,8 +363,20 @@ export function WeChatSkin(p: SkinProps) {
             creator={p.creator}
             onItem={p.onItem}
             onRead={p.onRead}
+            follow={scriptedThread}
           />
-          <Compose creator={p.creator} onAdd={p.onAdd} />
+          {scriptedThread ? (
+            <ScriptedWeChatComposer
+              reply={reply}
+              onSend={() => {
+                const timestamp = Date.now();
+                setNow(timestamp);
+                setSentAt(sentAt === 0 ? timestamp : -1);
+              }}
+            />
+          ) : (
+            <Compose creator={p.creator} onAdd={p.onAdd} />
+          )}
         </>
       ) : moments ? (
         <div className="wx-moments">
@@ -355,7 +443,15 @@ export function WeChatSkin(p: SkinProps) {
                       }}
                     >
                       <span className="wx-chat-avatar">
-                        <Avatar name={t} src={last.avatar} />
+                        <Avatar
+                          name={t}
+                          src={
+                            last.meta.scriptedReply
+                              ? list[0].avatar
+                              : last.avatar
+                          }
+                          neutral={!!last.meta.scriptedReply}
+                        />
                         {!readThreads.includes(t) &&
                           list.some((i) => !i.read) && (
                             <b className="wx-unread">
@@ -390,7 +486,10 @@ export function WeChatSkin(p: SkinProps) {
                 >
                   <Avatar
                     name={c}
-                    src={p.contacts?.find((item) => item.title === c)?.avatar || p.items.find((i) => i.sender === c)?.avatar}
+                    src={
+                      p.contacts?.find((item) => item.title === c)?.avatar ||
+                      p.items.find((i) => i.sender === c)?.avatar
+                    }
                   />
                   {c}
                 </button>
@@ -424,9 +523,12 @@ export function WeChatSkin(p: SkinProps) {
           ) : (
             <>
               <div className="wx-profile">
-                <Avatar name={p.owner || "机主"} src={p.ownerAvatar} />
+                <Avatar
+                  name={p.wechatName || p.owner || "机主"}
+                  src={p.ownerAvatar}
+                />
                 <div>
-                  <h2>{p.owner || "机主"}</h2>
+                  <h2>{p.wechatName || p.owner || "机主"}</h2>
                   <small>微信号：未设置</small>
                   <button
                     className="wx-profile-status"
