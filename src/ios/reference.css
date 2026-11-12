@@ -925,12 +925,12 @@
   background: transparent;
   color: #858585;
 }
-.ios18 .wechat-ui .wx-nav > strong:has(.skin-avatar) {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+.ios18 .wechat-ui .wx-chat-timestamp {
+  margin: 4px 0 14px;
+  text-align: center;
+  color: #757575;
+  font-size: 12px;
 }
-.ios18 .wechat-ui .wx-nav > strong > .skin-avatar {
-  width: 22px;
-  height: 22px;
+.ios18 .wechat-ui .skin-bubble {
+  overflow-wrap: anywhere;
 }

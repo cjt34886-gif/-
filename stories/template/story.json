@@ -791,7 +791,176 @@
           "afterConversation": "qian-assignment",
           "nickname": "Muaaa",
           "realName": "穆瑞恩",
-          "remark": ""
+          "remark": "",
+          "acceptedRemark": "穆瑞恩"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学长，今天谢谢你带我熟悉学校。",
+        "time": "2026-09-04 14:35",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "没事。",
+        "time": "2026-09-04 14:36",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "对了，今天路过体育馆的时候，好像看到你们篮球社在训练。",
+        "time": "2026-09-04 14:36",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学长也是篮球社的吗？",
+        "time": "2026-09-04 14:36",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2200"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "嗯。",
+        "time": "2026-09-04 14:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "难怪。",
+        "time": "2026-09-04 14:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "感觉学长挺熟悉那边的。",
+        "time": "2026-09-04 14:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2200"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你不是踢足球的？",
+        "time": "2026-09-04 14:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "是啊哈哈哈",
+        "time": "2026-09-04 14:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "不过刚转过来，还没去足球队报到。",
+        "time": "2026-09-04 14:38",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2200"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-11",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学长明天在学校吗？",
+        "time": "2026-09-04 14:38",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "3400"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-12",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "在。",
+        "time": "2026-09-04 14:38",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-13",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那明天有机会再见啦。",
+        "time": "2026-09-04 14:38",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-first-chat-14",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "嗯，明天见。",
+        "time": "2026-09-04 14:39",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
         }
       }
     ]

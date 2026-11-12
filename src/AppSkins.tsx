@@ -1,6 +1,6 @@
 import { NativeComposer } from "./DeviceSystem";
 import { useSkinState } from "./skinState";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ScriptedWeChatComposer } from "./ScriptedWeChatComposer";
 import {
   ChevronLeft,
@@ -101,6 +101,7 @@ function MessageList({
   whatsapp = false,
   follow = false,
   animatedId,
+  groupTimes = false,
 }: {
   items: Item[];
   creator: boolean;
@@ -109,6 +110,7 @@ function MessageList({
   whatsapp?: boolean;
   follow?: boolean;
   animatedId?: string;
+  groupTimes?: boolean;
 }) {
   const scroll = useRef<HTMLDivElement>(null);
   const latest = items.at(-1)?.id;
@@ -129,35 +131,41 @@ function MessageList({
       className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}
     >
       <div className="skin-date">{items[0]?.time.slice(0, 10)}</div>
-      {items.map((i) => (
-        <div
-          key={i.id}
-          className={`skin-message ${i.outgoing ? "outgoing" : ""} ${i.id === animatedId ? "wx-message-arriving" : ""}`}
-        >
-          {!whatsapp && !i.outgoing && (
-            <Avatar name={i.sender} src={i.avatar} neutral={follow} />
+      {items.map((i, index) => (
+        <Fragment key={i.id}>
+          {groupTimes && i.time !== items[index - 1]?.time && (
+            <div className="wx-chat-timestamp">{i.time.slice(-5)}</div>
           )}
-          <button
-            className="skin-bubble"
-            onClick={() => (creator ? onItem(i) : onRead(i.id))}
+          <div
+            className={`skin-message ${i.outgoing ? "outgoing" : ""} ${i.id === animatedId ? "wx-message-arriving" : ""}`}
           >
-            {["image", "audio", "video"].includes(i.kind) ? (
-              <ItemMedia item={i} />
-            ) : i.kind === "transfer" ? (
-              <div className="skin-transfer">
-                ¥ {i.body}
-                <small>转账记录 · 虚构</small>
-              </div>
-            ) : (
-              i.body
+            {!whatsapp && !i.outgoing && (
+              <Avatar name={i.sender} src={i.avatar} neutral={follow} />
             )}
-            <small className={whatsapp ? undefined : "wx-message-time"}>
-              {i.time.slice(-5)}{" "}
-              {whatsapp && i.outgoing && <CheckCheck size={11} />}
-            </small>
-          </button>
-          {!whatsapp && i.outgoing && <Avatar name={i.sender} src={i.avatar} />}
-        </div>
+            <button
+              className="skin-bubble"
+              onClick={() => (creator ? onItem(i) : onRead(i.id))}
+            >
+              {["image", "audio", "video"].includes(i.kind) ? (
+                <ItemMedia item={i} />
+              ) : i.kind === "transfer" ? (
+                <div className="skin-transfer">
+                  ¥ {i.body}
+                  <small>转账记录 · 虚构</small>
+                </div>
+              ) : (
+                i.body
+              )}
+              <small className={whatsapp ? undefined : "wx-message-time"}>
+                {i.time.slice(-5)}{" "}
+                {whatsapp && i.outgoing && <CheckCheck size={11} />}
+              </small>
+            </button>
+            {!whatsapp && i.outgoing && (
+              <Avatar name={i.sender} src={i.avatar} />
+            )}
+          </div>
+        </Fragment>
       ))}
     </div>
   );
@@ -262,7 +270,66 @@ export function WeChatSkin(props: SkinProps) {
     request?.meta.remark || request?.meta.nickname || request?.title;
   const requestUnread = !!request && p.ui?.[request.id + ":seen"] !== true;
   const accepted = !!request && p.ui?.[request.id + ":accepted"] === true;
-  const friendName = accepted ? requestName : undefined;
+  const friendName = accepted
+    ? request?.meta.acceptedRemark || requestName
+    : undefined;
+  const friendKey = request?.id ?? "friend";
+  const [friendReplies, setFriendReplies] = useSkinState<string[]>(
+    p,
+    friendKey + ":replies",
+    [],
+  );
+  const [friendSeen, setFriendSeen] = useSkinState<number>(
+    p,
+    friendKey + ":messagesSeen",
+    0,
+  );
+  const friendScript = friendName
+    ? p.items.filter((item) => item.meta.friendDialogue === friendKey)
+    : [];
+  const friendMessages: Item[] = [];
+  let replyIndex = 0;
+  let lastReplyAt = 0;
+  let nextDue = 0;
+  let friendReply: string | undefined;
+  for (const item of friendScript) {
+    if (item.outgoing) {
+      lastReplyAt = Number(friendReplies[replyIndex++]);
+      if (!lastReplyAt) {
+        friendReply = item.body;
+        break;
+      }
+    } else if (lastReplyAt) {
+      const due = lastReplyAt + Number(item.meta.delayMs);
+      if (due > now) {
+        nextDue = due;
+        break;
+      }
+    }
+    friendMessages.push({
+      ...item,
+      sender: item.outgoing ? (p.owner ?? "我") : friendName!,
+      avatar: (item.outgoing ? p.ownerAvatar : request?.avatar) ?? "",
+    });
+  }
+  useEffect(() => {
+    if (!nextDue) return;
+    const timer = window.setTimeout(
+      () => setNow(Math.max(nextDue, Date.now())),
+      Math.max(0, nextDue - Date.now()),
+    );
+    return () => window.clearTimeout(timer);
+  }, [nextDue]);
+  const friendThread = !!friendName && p.thread === friendName;
+  const friendCount = friendMessages.length;
+  useEffect(() => {
+    if (friendThread && !utility && friendCount > friendSeen)
+      setFriendSeen(friendCount);
+  }, [friendThread, utility, friendCount, friendSeen, setFriendSeen]);
+  const friendUnread = friendMessages
+    .slice(friendSeen)
+    .filter((item) => !item.outgoing).length;
+  const friendLatest = friendMessages.at(-1);
   const openRequests = () => {
     setUtility("新的朋友");
     if (requestUnread && request) p.onUi?.(request.id + ":seen", true);
@@ -274,14 +341,18 @@ export function WeChatSkin(props: SkinProps) {
   const conversations = [
     ...new Set(
       p.items
-        .filter((i) => !["朋友圈", "我", "新的朋友"].includes(i.folder))
+        .filter(
+          (i) => !["朋友圈", "我", "新的朋友", "好友剧情"].includes(i.folder),
+        )
         .map((i) => i.title),
     ),
   ];
   const contacts = [
     ...new Set([
       ...p.items
-        .filter((i) => i.meta.friendRequest !== "true")
+        .filter(
+          (i) => i.meta.friendRequest !== "true" && !i.meta.friendDialogue,
+        )
         .map((i) => i.sender)
         .filter((s) => s !== "我" && s !== p.owner),
       ...(p.contacts ?? []).map((item) => item.title),
@@ -339,9 +410,6 @@ export function WeChatSkin(props: SkinProps) {
                 : tab === "微信"
                   ? p.name
                   : tab)}
-          {friendName && p.thread === friendName && !utility && (
-            <Avatar name={friendName} src={request?.avatar} />
-          )}
         </strong>
         {(moments || utility === "新的朋友") && !p.creator ? (
           <span aria-hidden="true" />
@@ -416,12 +484,18 @@ export function WeChatSkin(props: SkinProps) {
                 <div>
                   <Avatar name={friendName} src={request?.avatar} />
                   <small>{friendName}</small>
+                  <small>昵称：{request?.meta.nickname}</small>
                 </div>
               )}
               {[
                 ...new Set(
                   p.items
-                    .filter((i) => i.title === p.thread)
+                    .filter(
+                      (i) =>
+                        i.title === p.thread &&
+                        !i.meta.friendDialogue &&
+                        i.meta.friendRequest !== "true",
+                    )
                     .map((i) => i.sender),
                 ),
               ].map((name) => (
@@ -453,16 +527,33 @@ export function WeChatSkin(props: SkinProps) {
       ) : p.thread ? (
         <>
           <MessageList
-            items={p.items.filter(
-              (i) => i.title === p.thread && i.meta.friendRequest !== "true",
-            )}
+            items={
+              friendThread
+                ? friendMessages
+                : p.items.filter(
+                    (i) =>
+                      i.title === p.thread &&
+                      i.meta.friendRequest !== "true" &&
+                      !i.meta.friendDialogue,
+                  )
+            }
             creator={p.creator}
             onItem={p.onItem}
             onRead={p.onRead}
-            follow={scriptedThread}
+            follow={scriptedThread || friendThread}
+            groupTimes={friendThread}
             animatedId={animatedId}
           />
-          {scriptedThread ? (
+          {friendThread && friendScript.length ? (
+            <ScriptedWeChatComposer
+              reply={friendReply}
+              onSend={() => {
+                const timestamp = Date.now();
+                setNow(timestamp);
+                setFriendReplies([...friendReplies, String(timestamp)]);
+              }}
+            />
+          ) : scriptedThread ? (
             <ScriptedWeChatComposer
               reply={reply}
               onSend={() => {
@@ -602,10 +693,15 @@ export function WeChatSkin(props: SkinProps) {
                   >
                     <span className="wx-chat-avatar">
                       <Avatar name={friendName} src={request?.avatar} />
+                      {friendUnread > 0 && (
+                        <b className="wx-unread">{friendUnread}</b>
+                      )}
                     </span>
                     <div>
                       <strong>{friendName}</strong>
+                      {friendLatest && <p>{friendLatest.body}</p>}
                     </div>
+                    {friendLatest && <time>{friendLatest.time.slice(-5)}</time>}
                   </button>
                 )}
               {!conversations.length && !friendName && (
