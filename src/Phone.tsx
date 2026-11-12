@@ -406,6 +406,7 @@ function PhoneRuntime({
         );
       if (
         !notice.unread ||
+        notice.quiet ||
         currentThread ||
         currentPost ||
         sameSender ||
@@ -487,6 +488,7 @@ function PhoneRuntime({
   const unreadFor = (id: string) =>
     notifications.filter(
       (notice) =>
+        !notice.source &&
         notice.destination.app === id &&
         notice.unread &&
         notice.at <= notificationNow,
@@ -916,11 +918,32 @@ function PhoneRuntime({
             {storyBanner && (
               <StoryBanner
                 key={storyBanner.id}
-                icon={<AppIcon id={storyBanner.destination.app} small />}
+                icon={
+                  storyBanner.avatar && safeMedia(storyBanner.avatar) ? (
+                    <img
+                      className="story-banner-avatar"
+                      src={safeMedia(storyBanner.avatar)}
+                      alt=""
+                    />
+                  ) : storyBanner.sender &&
+                    "thread" in storyBanner.destination ? (
+                    <span className="story-banner-avatar story-banner-initial">
+                      {storyBanner.sender.slice(0, 1)}
+                    </span>
+                  ) : (
+                    <AppIcon
+                      id={storyBanner.source ?? storyBanner.destination.app}
+                      small
+                    />
+                  )
+                }
+                sender={storyBanner.sender}
                 name={
-                  work.apps.find(
-                    (item) => item.id === storyBanner.destination.app,
-                  )?.name ?? getApp(storyBanner.destination.app).name
+                  storyBanner.source === "calendar"
+                    ? "日历"
+                    : (work.apps.find(
+                        (item) => item.id === storyBanner.destination.app,
+                      )?.name ?? getApp(storyBanner.destination.app).name)
                 }
                 text={storyBanner.text}
                 onDismiss={() =>

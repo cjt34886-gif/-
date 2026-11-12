@@ -14,6 +14,10 @@ export type StoryNotice = {
   destination: BannerDestination;
   unread: boolean;
   storyTime?: string;
+  source?: "calendar";
+  sender?: string;
+  avatar?: string;
+  quiet?: boolean;
 };
 
 export function weiboPostPublished(item: Item, state: Runtime) {
@@ -51,14 +55,24 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
   );
   const ui = state.ui?.wechat ?? {};
   const notices: StoryNotice[] = [];
-  const message = (item: Item, thread: string, at: number, unread: boolean) => {
+  const message = (
+    item: Item,
+    thread: string,
+    at: number,
+    unread: boolean,
+    quiet = false,
+    avatar = item.avatar,
+  ) => {
+    const reminder = item.meta.calendarReminder;
     notices.push({
       id: item.id,
       storyTime: item.meta.advanceStoryClock === "true" ? item.time : undefined,
       at,
-      text: item.meta.bannerBody
-        ? `${thread}：${item.meta.bannerBody}`
-        : `${thread}给你发了一条新消息`,
+      text: reminder || item.meta.bannerBody || item.body,
+      source: reminder ? "calendar" : undefined,
+      sender: reminder ? undefined : thread,
+      avatar,
+      quiet,
       destination: { app: "wechat", thread },
       unread,
     });
@@ -82,7 +96,13 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
       script
         .slice(2, 4)
         .forEach((item, index) =>
-          message(item, first.title, sent + 1000 + index * 1500, seen <= index),
+          message(
+            item,
+            first.title,
+            sent + 1000 + index * 1500,
+            seen <= index,
+            index > 0,
+          ),
         );
     }
     if (sent < -1) {
@@ -95,6 +115,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
             first.title,
             -sent + 1000 + index * 1500,
             seen <= index,
+            index > 0,
           ),
         );
     }
@@ -110,7 +131,9 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
     notices.push({
       id: request.id,
       at,
-      text: `${nickname} 请求添加你为朋友`,
+      text: "请求添加你为朋友",
+      sender: nickname,
+      avatar: request.avatar,
       destination: { app: "wechat", requests: true },
       unread: !accepted && ui[request.id + ":seen"] !== true,
     });
@@ -122,6 +145,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
       request.meta.acceptedRemark || request.meta.remark || nickname;
     let round = 0;
     let replyAt = 0;
+    let previousArrival: number | undefined;
     const dialogue = items.filter(
       (item) => item.meta.friendDialogue === request.id,
     );
@@ -130,14 +154,33 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
         const startAfter = Number(item.meta.startAfterMs);
         if (item.meta.advanceStoryClock === "true") {
           const at = startAfter ? replyAt + startAfter : Number(times[round]);
-          if (at) message(item, thread, at, false);
+          if (at)
+            message(
+              item,
+              thread,
+              at,
+              !!item.meta.calendarReminder && !times[round],
+            );
         }
+        previousArrival = undefined;
         replyAt = Number(times[round++]);
         if (!replyAt) break;
       } else {
         const arrival = friendMessageArrival(item, replyAt, publishedPosts);
         if (arrival === undefined) break;
-        message(item, thread, arrival || at, seen <= index);
+        const deliveredAt = arrival || at;
+        const quiet =
+          previousArrival !== undefined &&
+          deliveredAt - previousArrival <= 1500;
+        message(
+          item,
+          thread,
+          deliveredAt,
+          seen <= index,
+          quiet,
+          request.avatar,
+        );
+        previousArrival = deliveredAt;
       }
     }
   }
@@ -147,6 +190,8 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
       id: item.id,
       at: 0,
       text: item.meta.bannerBody,
+      sender: item.sender,
+      avatar: item.avatar,
       destination: { app: "weibo", post: item.id },
       unread: !state.read.includes(item.id),
     });
@@ -157,12 +202,14 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
 export function StoryBanner({
   icon,
   name,
+  sender,
   text,
   onOpen,
   onDismiss,
 }: {
   icon: ReactNode;
   name: string;
+  sender?: string;
   text: string;
   onOpen: () => void;
   onDismiss: () => void;
@@ -202,7 +249,7 @@ export function StoryBanner({
       <span>
         <strong>{name}</strong>
         <small>现在</small>
-        <span>{text}</span>
+        <span>{sender ? `${sender} · ${text}` : text}</span>
       </span>
     </motion.button>
   );
