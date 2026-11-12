@@ -50,7 +50,8 @@ export function SocialDetail(p: {
     [menu, setMenu] = useState(false),
     [sort, setSort] = useState(false),
     [copied, setCopied] = useState(false);
-  const comments = [...item.comments, ...extra],
+  const readOnly = weibo && item.meta.readOnly === "true";
+  const comments = readOnly ? item.comments : [...item.comments, ...extra],
     replies = sort ? [...comments].reverse() : comments;
   const copy = async () => {
     try {
@@ -134,7 +135,7 @@ export function SocialDetail(p: {
                 : meta(item, "handle", item.sender ? "@" + item.sender : "")}
             </small>
           </div>
-          {weibo ? (
+          {readOnly ? null : weibo ? (
             <button
               aria-label="关注作者"
               onClick={() => setFollowed(!followed)}
@@ -154,7 +155,7 @@ export function SocialDetail(p: {
           <RichText value={item.richText} fallback={item.body} />
           {item.media && <Media item={item} />}
         </div>
-        {weibo ? (
+        {readOnly ? null : weibo ? (
           <div className="weibo-share-options">
             {[Crown, MessageCircle, Camera, Share, Copy].map((Icon, n) => (
               <button
@@ -219,24 +220,26 @@ export function SocialDetail(p: {
                   <div>
                     <strong>{name}</strong>
                     <p>{body}</p>
-                    <div className="post-comment-actions">
-                      <button
-                        aria-label={"回复" + name}
-                        onClick={() => setTarget(name)}
-                      >
-                        <MessageCircle size={16} />
-                      </button>
-                      <button
-                        aria-label={"喜欢回复" + index}
-                        onClick={(e) => {
-                          e.currentTarget.classList.toggle("liked");
-                        }}
-                      >
-                        <Heart size={16} />
-                      </button>
-                    </div>
+                    {!readOnly && (
+                      <div className="post-comment-actions">
+                        <button
+                          aria-label={"回复" + name}
+                          onClick={() => setTarget(name)}
+                        >
+                          <MessageCircle size={16} />
+                        </button>
+                        <button
+                          aria-label={"喜欢回复" + index}
+                          onClick={(e) => {
+                            e.currentTarget.classList.toggle("liked");
+                          }}
+                        >
+                          <Heart size={16} />
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <MoreHorizontal size={17} />
+                  {!readOnly && <MoreHorizontal size={17} />}
                 </article>
               );
             })}
@@ -248,26 +251,32 @@ export function SocialDetail(p: {
           </p>
         )}
       </div>
-      <form
-        className="post-detail-reply"
-        onSubmit={(e) => {
-          e.preventDefault();
-          submit();
-        }}
-      >
-        <Avatar name={p.owner || "机主"} />
-        <input
-          aria-label="回复帖子"
-          placeholder={
-            target ? "回复 @" + target : weibo ? "发表你的评论" : "发布你的回复"
-          }
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-        />
-        <button aria-label="发送回复" disabled={!draft.trim()}>
-          <Send size={20} />
-        </button>
-      </form>
+      {!readOnly && (
+        <form
+          className="post-detail-reply"
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
+          <Avatar name={p.owner || "机主"} />
+          <input
+            aria-label="回复帖子"
+            placeholder={
+              target
+                ? "回复 @" + target
+                : weibo
+                  ? "发表你的评论"
+                  : "发布你的回复"
+            }
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+          />
+          <button aria-label="发送回复" disabled={!draft.trim()}>
+            <Send size={20} />
+          </button>
+        </form>
+      )}
       {!weibo && (
         <nav className="x-detail-bottom">
           {[Home, Search, Circle, Bell, MessageCircle].map((Icon, n) => (

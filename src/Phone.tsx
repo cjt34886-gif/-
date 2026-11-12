@@ -957,6 +957,20 @@ function AppContent({
   const [likes, setLikes] = useState<string[]>([]);
   const shown = items
     .filter((i) => creator || visible(i, state))
+    .filter((item) => {
+      const prerequisite = app.id === "weibo" && item.meta.afterWechatReplies;
+      if (creator || !prerequisite) return true;
+      const replies = state.ui?.wechat?.[prerequisite];
+      return (
+        Array.isArray(replies) &&
+        replies.length >= Number(item.meta.requiredReplies)
+      );
+    })
+    .map((item) =>
+      app.id === "weibo" && item.meta.afterWechatReplies
+        ? { ...item, read: state.read.includes(item.id) }
+        : item,
+    )
     .filter((i) =>
       (i.title + i.body + i.sender).toLowerCase().includes(q.toLowerCase()),
     );

@@ -57,7 +57,7 @@ function Actions({ p, item }: { p: Props; item: Item }) {
 function PostHeader({ item, p }: { item: Item; p: Props }) {
   return (
     <button className="social-author" onClick={() => p.onItem(item)}>
-      <Avatar name={item.sender} />
+      <Avatar name={item.sender} src={item.avatar} />
       <span>
         <strong>{item.sender}</strong>
         <small>{meta(item, "handle", item.time)}</small>
@@ -67,6 +67,24 @@ function PostHeader({ item, p }: { item: Item; p: Props }) {
 }
 function WeiboActions({ p, item }: { p: Props; item: Item }) {
   const [liked, setLiked] = useSkinState<boolean>(p, `liked-${item.id}`, false);
+  if (item.meta.readOnly === "true") {
+    return (
+      <div className="social-actions weibo-actions">
+        <span aria-label="转发">
+          <Share2 size={17} />
+          {meta(item, "reposts")}
+        </span>
+        <button aria-label={`评论${item.title}`} onClick={() => p.onItem(item)}>
+          <MessageCircle size={17} />
+          {item.comments.length}
+        </button>
+        <span aria-label="点赞">
+          <ThumbsUp size={17} />
+          {item.likes}
+        </span>
+      </div>
+    );
+  }
   return (
     <div className="social-actions weibo-actions">
       <button aria-label={`转发${item.title}`} onClick={() => p.onItem(item)}>
@@ -128,7 +146,7 @@ export function WeiboSkin(p: Props) {
           </>
         )}
         {list.map((i) => (
-          <article className="weibo-post" key={i.id}>
+          <article className="weibo-post" key={i.id} data-read={i.read}>
             <PostHeader p={p} item={i} />
             <button className="social-body" onClick={() => p.onItem(i)}>
               <p>{i.body}</p>
