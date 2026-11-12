@@ -40,6 +40,7 @@ export type SkinProps = {
   owner?: string;
   ownerAvatar?: string;
   wechatName?: string;
+  wechatId?: string;
   contacts?: Item[];
   virtualTime?: string;
   name: string;
@@ -574,7 +575,7 @@ export function WeChatSkin(props: SkinProps) {
                 <Avatar name={profileName} src={p.ownerAvatar} />
                 <div>
                   <h2>{profileName}</h2>
-                  <small>微信号：未设置</small>
+                  <small>微信号：{p.wechatId || "未设置"}</small>
                   <button
                     className="wx-profile-status"
                     onClick={() => setUtility("状态")}

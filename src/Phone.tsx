@@ -997,6 +997,7 @@ function AppContent({
               owner={work.phone.owner}
               ownerAvatar={work.phone.ownerAvatar}
               wechatName={work.phone.wechatName}
+              wechatId={work.phone.wechatId}
               contacts={work.data.contacts?.filter(
                 (item) => item.meta.wechat === "true",
               )}

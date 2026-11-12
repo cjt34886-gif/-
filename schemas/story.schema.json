@@ -33,6 +33,9 @@
         "ownerAvatar": {
           "type": "string"
         },
+        "wechatId": {
+          "type": "string"
+        },
         "wechatName": {
           "type": "string"
         },
