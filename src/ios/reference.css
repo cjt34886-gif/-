@@ -999,3 +999,17 @@
 .weibo-comment-profile {
   font-weight: 600;
 }
+.ios18 .post-detail-body .weibo-photo-thumbnail {
+  display: block;
+  width: min(144px, 100%);
+  padding: 0;
+}
+.ios18 .post-detail-body .weibo-photo-thumbnail img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  object-fit: contain;
+  object-position: left center;
+  border-radius: 6px;
+}

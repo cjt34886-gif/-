@@ -157,7 +157,11 @@ export function SocialDetail(p: {
           <RichText value={item.richText} fallback={item.body} />
           {item.meta.photoSlot ? (
             item.media ? (
-              <button aria-label="放大照片" onClick={() => setPhotoOpen(true)}>
+              <button
+                className="weibo-photo-thumbnail"
+                aria-label="放大照片"
+                onClick={() => setPhotoOpen(true)}
+              >
                 <Media item={item} />
               </button>
             ) : (
