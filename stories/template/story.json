@@ -979,6 +979,128 @@
           "friendDialogue": "muaaa-friend-request",
           "delayMs": "0"
         }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学长，你看到校园墙了吗哈哈哈",
+        "time": "2026-09-05 13:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "5500",
+          "afterWeiboPost": "yibei-weekend-track"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "看到了。",
+        "time": "2026-09-05 13:07",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "没想到周末去趟操场还能被人发微博。",
+        "time": "2026-09-05 13:07",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "评论区都在猜我是谁。",
+        "time": "2026-09-05 13:07",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学校就这么大。",
+        "time": "2026-09-05 13:08",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "也是哈哈哈",
+        "time": "2026-09-05 13:08",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "不过他们好像更惊讶你周末会出现在操场。",
+        "time": "2026-09-05 13:08",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "有这么奇怪？",
+        "time": "2026-09-05 13:09",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "哈哈哈可能吧",
+        "time": "2026-09-05 13:09",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-campus-wall-chat-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "毕竟你是学生会会长嘛",
+        "time": "2026-09-05 13:09",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100",
+          "resumeNormalComposer": "true"
+        }
       }
     ]
   },

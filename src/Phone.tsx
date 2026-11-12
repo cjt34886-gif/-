@@ -1233,6 +1233,15 @@ function AppContent({
               wechatId={work.phone.wechatId}
               friendRequest={friendRequest}
               notificationDestination={destination}
+              publishedWeiboPosts={
+                app.id === "wechat"
+                  ? new Set(
+                      (work.data.weibo ?? [])
+                        .filter((item) => weiboPostPublished(item, state))
+                        .map((item) => item.id),
+                    )
+                  : undefined
+              }
               contacts={work.data.contacts?.filter(
                 (item) => item.meta.wechat === "true",
               )}

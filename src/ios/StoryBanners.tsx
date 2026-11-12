@@ -25,8 +25,23 @@ export function weiboPostPublished(item: Item, state: Runtime) {
   );
 }
 
+export function friendMessageArrival(
+  item: Item,
+  replyAt: number,
+  publishedPosts: ReadonlySet<string>,
+): number | undefined {
+  const post = item.meta.afterWeiboPost;
+  if (post && (!replyAt || !publishedPosts.has(post))) return undefined;
+  return replyAt ? replyAt + Number(item.meta.delayMs) : 0;
+}
+
 export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
   const items = work.data.wechat ?? [];
+  const publishedPosts = new Set(
+    (work.data.weibo ?? [])
+      .filter((item) => weiboPostPublished(item, state))
+      .map((item) => item.id),
+  );
   const ui = state.ui?.wechat ?? {};
   const notices: StoryNotice[] = [];
   const message = (item: Item, thread: string, at: number, unread: boolean) => {
@@ -105,17 +120,14 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
         replyAt = Number(times[round++]);
         if (!replyAt) break;
       } else {
-        message(
-          item,
-          thread,
-          replyAt ? replyAt + Number(item.meta.delayMs) : at,
-          seen <= index,
-        );
+        const arrival = friendMessageArrival(item, replyAt, publishedPosts);
+        if (arrival === undefined) break;
+        message(item, thread, arrival || at, seen <= index);
       }
     }
   }
   for (const item of work.data.weibo ?? []) {
-    if (!item.meta.bannerBody || !weiboPostPublished(item, state)) continue;
+    if (!item.meta.bannerBody || !publishedPosts.has(item.id)) continue;
     notices.push({
       id: item.id,
       at: 0,

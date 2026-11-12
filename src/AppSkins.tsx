@@ -1,4 +1,7 @@
-import type { BannerDestination } from "./ios/StoryBanners";
+import {
+  friendMessageArrival,
+  type BannerDestination,
+} from "./ios/StoryBanners";
 import { NativeComposer } from "./DeviceSystem";
 import { useSkinState } from "./skinState";
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -44,6 +47,7 @@ export type SkinProps = {
   wechatId?: string;
   friendRequest?: Item;
   notificationDestination?: BannerDestination;
+  publishedWeiboPosts?: ReadonlySet<string>;
   contacts?: Item[];
   virtualTime?: string;
   name: string;
@@ -135,6 +139,11 @@ function MessageList({
       <div className="skin-date">{items[0]?.time.slice(0, 10)}</div>
       {items.map((i, index) => (
         <Fragment key={i.id}>
+          {groupTimes &&
+            index > 0 &&
+            i.time.slice(0, 10) !== items[index - 1].time.slice(0, 10) && (
+              <div className="skin-date">{i.time.slice(0, 10)}</div>
+            )}
           {groupTimes && i.time !== items[index - 1]?.time && (
             <div className="wx-chat-timestamp">{i.time.slice(-5)}</div>
           )}
@@ -319,6 +328,7 @@ export function WeChatSkin(props: SkinProps) {
     ? p.items.filter((item) => item.meta.friendDialogue === friendKey)
     : [];
   const friendMessages: Item[] = [];
+  const publishedPosts = p.publishedWeiboPosts ?? new Set<string>();
   let replyIndex = 0;
   let lastReplyAt = 0;
   let nextDue = 0;
@@ -330,8 +340,9 @@ export function WeChatSkin(props: SkinProps) {
         friendReply = item.body;
         break;
       }
-    } else if (lastReplyAt) {
-      const due = lastReplyAt + Number(item.meta.delayMs);
+    } else {
+      const due = friendMessageArrival(item, lastReplyAt, publishedPosts);
+      if (due === undefined) break;
       if (due > now) {
         nextDue = due;
         break;
@@ -361,6 +372,8 @@ export function WeChatSkin(props: SkinProps) {
     .slice(friendSeen)
     .filter((item) => !item.outgoing).length;
   const friendLatest = friendMessages.at(-1);
+  const friendScriptFinished =
+    friendLatest?.meta.resumeNormalComposer === "true";
   const openRequests = () => {
     setUtility("新的朋友");
     if (requestUnread && request) p.onUi?.(request.id + ":seen", true);
@@ -575,7 +588,7 @@ export function WeChatSkin(props: SkinProps) {
             groupTimes={friendThread}
             animatedId={animatedId}
           />
-          {friendThread && friendScript.length ? (
+          {friendThread && friendScript.length && !friendScriptFinished ? (
             <ScriptedWeChatComposer
               reply={friendReply}
               onSend={() => {
