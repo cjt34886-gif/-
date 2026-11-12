@@ -138,7 +138,6 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
     if (!accepted) continue;
     const replies = ui[request.id + ":replies"];
     const times = Array.isArray(replies) ? replies : [];
-    const seen = Number(ui[request.id + ":messagesSeen"] ?? 0);
     const thread =
       request.meta.acceptedRemark || request.meta.remark || nickname;
     let round = 0;
@@ -148,6 +147,12 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
       (item) => item.meta.friendDialogue === request.id,
     );
     for (const [index, item] of dialogue.entries()) {
+      const target = item.meta.storyThread || thread;
+      const seen = Number(
+        ui[
+          request.id + ":messagesSeen" + (target === thread ? "" : ":" + target)
+        ] ?? 0,
+      );
       if (item.outgoing) {
         const startAfter = Number(item.meta.startAfterMs);
         if (item.meta.advanceStoryClock === "true") {
@@ -155,7 +160,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
           if (at)
             message(
               item,
-              thread,
+              target,
               at,
               !!item.meta.calendarReminder && !times[round],
             );
@@ -172,7 +177,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
           deliveredAt - previousArrival <= 1500;
         message(
           item,
-          thread,
+          target,
           deliveredAt,
           seen <= index,
           quiet,
