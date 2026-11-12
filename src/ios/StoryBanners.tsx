@@ -13,9 +13,16 @@ export type StoryNotice = {
   text: string;
   destination: BannerDestination;
   unread: boolean;
+  storyTime?: string;
 };
 
 export function weiboPostPublished(item: Item, state: Runtime) {
+  const afterMessage = item.meta.afterStoryMessage;
+  if (afterMessage)
+    return (
+      typeof state.ui?.storyClock?.[afterMessage] === "number" &&
+      `${state.date} ${state.time}` >= item.time
+    );
   const key = item.meta.afterWechatReplies;
   if (!key) return true;
   const replies = state.ui?.wechat?.[key];
@@ -47,6 +54,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
   const message = (item: Item, thread: string, at: number, unread: boolean) => {
     notices.push({
       id: item.id,
+      storyTime: item.meta.advanceStoryClock === "true" ? item.time : undefined,
       at,
       text: item.meta.bannerBody
         ? `${thread}：${item.meta.bannerBody}`

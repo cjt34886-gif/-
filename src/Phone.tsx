@@ -425,6 +425,46 @@ function PhoneRuntime({
     }
     if (queued.length) setStoryQueue((previous) => [...previous, ...queued]);
   }, [ready, creator, s, work, app, noticeClock, storyQueue]);
+  useEffect(() => {
+    if (!ready || creator) return;
+    const current = runtimeRef.current;
+    const checkpoints = { ...current.ui?.storyClock };
+    let clock = `${current.date} ${current.time}`;
+    let changed = false;
+    for (const notice of notifications) {
+      if (
+        !notice.storyTime ||
+        notice.at > notificationNow ||
+        notice.id in checkpoints
+      )
+        continue;
+      checkpoints[notice.id] = current.elapsedMs ?? 0;
+      clock = clock > notice.storyTime ? clock : notice.storyTime;
+      changed = true;
+    }
+    for (const post of work.data.weibo ?? []) {
+      const trigger = post.meta.afterStoryMessage;
+      const completedAt = checkpoints[trigger];
+      if (
+        typeof completedAt === "number" &&
+        (current.elapsedMs ?? 0) - completedAt >= 5000 &&
+        clock < post.time
+      ) {
+        clock = post.time;
+        changed = true;
+      }
+    }
+    if (changed) {
+      const [date, time] = clock.split(" ");
+      update({
+        ...current,
+        date,
+        time,
+        clockRemainderMs: 0,
+        ui: { ...current.ui, storyClock: checkpoints },
+      });
+    }
+  }, [ready, creator, notifications, notificationNow, work]);
   const storyBanner = locked ? undefined : storyQueue[0];
   useEffect(() => {
     if (!storyBanner) return;
@@ -1106,7 +1146,9 @@ function AppContent({
   const shown = items
     .filter((i) => creator || visible(i, state))
     .filter((item) => {
-      const prerequisite = app.id === "weibo" && item.meta.afterWechatReplies;
+      const prerequisite =
+        app.id === "weibo" &&
+        (item.meta.afterWechatReplies || item.meta.afterStoryMessage);
       if (creator || !prerequisite) return true;
       return weiboPostPublished(item, state);
     })

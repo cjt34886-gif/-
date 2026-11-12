@@ -76,11 +76,11 @@ function WeiboActions({ p, item }: { p: Props; item: Item }) {
         </span>
         <button aria-label={`评论${item.title}`} onClick={() => p.onItem(item)}>
           <MessageCircle size={17} />
-          {item.comments.length}
+          {item.comments.length || "评论"}
         </button>
         <span aria-label="点赞">
           <ThumbsUp size={17} />
-          {item.likes}
+          {item.likes || "赞"}
         </span>
       </div>
     );
@@ -109,7 +109,15 @@ function WeiboActions({ p, item }: { p: Props; item: Item }) {
 export function WeiboSkin(p: Props) {
   const { tab, setTab, q, setQ, items } = useContent(p, "关注");
   const [feed, setFeed] = useState("全部");
-  const list = feed === "全部" ? items : items.filter((i) => i.folder === feed);
+  const ownPosts = items.filter((item) => item.meta.ownerPost === "true");
+  const profile = p.items.find((item) => item.meta.ownerPost === "true");
+  const selected =
+    tab === "我" && profile
+      ? ownPosts
+      : feed === "全部"
+        ? items
+        : items.filter((i) => i.folder === feed);
+  const list = [...selected].sort((a, b) => b.time.localeCompare(a.time));
   return (
     <div className="catalog-skin weibo-ui">
       <Header p={p} />
@@ -127,9 +135,12 @@ export function WeiboSkin(p: Props) {
       <div className="catalog-scroll">
         {tab === "我" ? (
           <div className="weibo-profile">
-            <Avatar name={p.owner ?? "我"} />
-            <h2>{p.owner ?? "我"}</h2>
-            <span>{items.length} 条微博</span>
+            <Avatar
+              name={profile?.sender ?? p.owner ?? "我"}
+              src={profile?.avatar}
+            />
+            <h2>{profile?.sender ?? p.owner ?? "我"}</h2>
+            <span>{profile ? ownPosts.length : items.length} 条微博</span>
           </div>
         ) : (
           <>
