@@ -48,7 +48,9 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
     notices.push({
       id: item.id,
       at,
-      text: `${thread}给你发了一条新消息`,
+      text: item.meta.bannerBody
+        ? `${thread}：${item.meta.bannerBody}`
+        : `${thread}给你发了一条新消息`,
       destination: { app: "wechat", thread },
       unread,
     });

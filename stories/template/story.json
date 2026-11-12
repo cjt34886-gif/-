@@ -1101,6 +1101,248 @@
           "delayMs": "2100",
           "resumeNormalComposer": "true"
         }
+      },
+      {
+        "id": "muaaa-yanyan-chat-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学长",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "7500",
+          "bannerBody": "学长"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "足球队平时在哪训练啊",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "8600"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "西操场",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "好嘞",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我下午过去看看",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "就是不知道他们几点开始训练",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "3200"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "问问体育老师",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "可是我还没有体育老师的联系方式",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我还以为今天就能跟他们一起踢球呢",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "...",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-11",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我帮你问",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-12",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "真的吗！",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-13",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "谢谢学长！！",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-14",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你不用一直叫我学长",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-15",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那叫什么",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-16",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "名字就行",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-17",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "好嘞",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-18",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "谢谢你言言",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2100"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-19",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "😽",
+        "time": "2026-09-07 12:24",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "3200"
+        }
+      },
+      {
+        "id": "muaaa-yanyan-chat-20",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "...",
+        "time": "2026-09-07 12:24",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0",
+          "resumeNormalComposer": "true"
+        }
       }
     ]
   },
