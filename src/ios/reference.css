@@ -269,7 +269,7 @@
 .ios18 .wechat-ui .wx-discover-groups > .wx-discovery {
   margin-bottom: 8px;
 }
-.ios18 .wechat-ui[data-tab="我"]:not([data-thread="true"]) .wx-nav {
+.ios18 .wechat-ui[data-tab="我"][data-moments="false"]:not([data-thread="true"]) .wx-nav {
   visibility: hidden;
   border: 0;
   background: #fff;

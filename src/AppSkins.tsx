@@ -230,7 +230,7 @@ export function WeChatSkin(props: SkinProps) {
     : props;
   const [tab, setTab] = useState("微信"),
     [query, setQuery] = useState(""),
-    [moments, setMoments] = useState(false),
+    [moments, setMoments] = useState<"" | "feed" | "album">(""),
     [menu, setMenu] = useState(false),
     [searchOpen, setSearchOpen] = useState(false),
     [utility, setUtility] = useState("");
@@ -254,15 +254,25 @@ export function WeChatSkin(props: SkinProps) {
       ...(p.contacts ?? []).map((item) => item.title),
     ]),
   ];
+  const coverItem = p.items.find((item) => item.meta.momentsCover === "true");
+  const cover = safeMedia(coverItem?.media ?? "");
+  const profileName = p.wechatName || p.owner || "机主";
   const posts = p.items.filter(
-    (i) => i.folder === "朋友圈" || i.kind === "post",
+    (item) =>
+      item !== coverItem &&
+      (item.folder === "朋友圈" || item.kind === "post") &&
+      (moments !== "album" ||
+        item.outgoing ||
+        item.sender === p.owner ||
+        item.sender === profileName ||
+        item.sender === "我"),
   );
   return (
     <div
       className="wechat-ui independent-skin"
       data-tab={tab}
       data-thread={!!p.thread}
-      data-moments={moments}
+      data-moments={!!moments}
       data-utility={!!utility}
     >
       <div className="app-nav wx-nav">
@@ -274,7 +284,9 @@ export function WeChatSkin(props: SkinProps) {
               : p.thread
                 ? p.onThread("")
                 : moments
-                  ? setMoments(false)
+                  ? setMoments(
+                      moments === "album" && tab === "发现" ? "feed" : "",
+                    )
                   : setUtility("收藏")
           }
         >
@@ -287,20 +299,36 @@ export function WeChatSkin(props: SkinProps) {
         <strong>
           {utility ||
             p.thread ||
-            (moments ? "朋友圈" : tab === "微信" ? p.name : tab)}
+            (moments === "album"
+              ? "我的朋友圈"
+              : moments
+                ? "朋友圈"
+                : tab === "微信"
+                  ? p.name
+                  : tab)}
         </strong>
-        <button
-          aria-label={
-            p.creator ? "新增内容" : p.thread ? "聊天详情" : "微信菜单"
-          }
-          onClick={
-            p.creator
-              ? p.onAdd
-              : () => (p.thread ? setUtility("聊天信息") : setMenu(!menu))
-          }
-        >
-          {p.thread ? <MoreHorizontal size={22} /> : <CirclePlus size={22} />}
-        </button>
+        {moments && !p.creator ? (
+          <span aria-hidden="true" />
+        ) : (
+          <button
+            aria-label={
+              p.creator ? "新增内容" : p.thread ? "聊天详情" : "微信菜单"
+            }
+            onClick={
+              p.creator
+                ? p.onAdd
+                : () => (p.thread ? setUtility("聊天信息") : setMenu(!menu))
+            }
+          >
+            {p.thread ? (
+              <MoreHorizontal size={22} />
+            ) : moments ? (
+              <Camera size={22} />
+            ) : (
+              <CirclePlus size={22} />
+            )}
+          </button>
+        )}
       </div>
       {menu && (
         <div className="wx-popup-menu" role="menu">
@@ -381,8 +409,28 @@ export function WeChatSkin(props: SkinProps) {
       ) : moments ? (
         <div className="wx-moments">
           <div className="wx-moment-cover">
-            <Camera size={32} />
-            <span>朋友圈</span>
+            {cover?.startsWith("data:image/") && (
+              <img
+                className="wx-moment-cover-image"
+                src={cover}
+                alt="雨雾中的灰蓝色海岸"
+              />
+            )}
+            {moments === "feed" ? (
+              <button
+                className="wx-moment-owner"
+                aria-label="打开我的朋友圈"
+                onClick={() => setMoments("album")}
+              >
+                <strong>{profileName}</strong>
+                <Avatar name={profileName} src={p.ownerAvatar} />
+              </button>
+            ) : (
+              <div className="wx-moment-owner">
+                <strong>{profileName}</strong>
+                <Avatar name={profileName} src={p.ownerAvatar} />
+              </div>
+            )}
           </div>
           {posts.map((i) => (
             <button
@@ -390,7 +438,7 @@ export function WeChatSkin(props: SkinProps) {
               className="wx-moment-post"
               onClick={() => p.onItem(i)}
             >
-              <Avatar name={i.sender} />
+              <Avatar name={i.sender} src={i.avatar} />
               <div>
                 <strong>{i.sender}</strong>
                 <p>{i.body}</p>
@@ -399,7 +447,7 @@ export function WeChatSkin(props: SkinProps) {
               </div>
             </button>
           ))}
-          {!posts.length && <p className="skin-empty">暂无朋友圈动态</p>}
+          {!posts.length && <p className="wx-moment-empty">暂无动态</p>}
           {p.creator && (
             <button className="phone-add" onClick={p.onAdd}>
               添加朋友圈动态
@@ -509,7 +557,7 @@ export function WeChatSkin(props: SkinProps) {
                     className="wx-discovery"
                     onClick={() =>
                       label === "朋友圈"
-                        ? setMoments(true)
+                        ? setMoments("feed")
                         : setUtility(String(label))
                     }
                   >
@@ -523,12 +571,9 @@ export function WeChatSkin(props: SkinProps) {
           ) : (
             <>
               <div className="wx-profile">
-                <Avatar
-                  name={p.wechatName || p.owner || "机主"}
-                  src={p.ownerAvatar}
-                />
+                <Avatar name={profileName} src={p.ownerAvatar} />
                 <div>
-                  <h2>{p.wechatName || p.owner || "机主"}</h2>
+                  <h2>{profileName}</h2>
                   <small>微信号：未设置</small>
                   <button
                     className="wx-profile-status"
@@ -555,7 +600,7 @@ export function WeChatSkin(props: SkinProps) {
                       className="wx-discovery"
                       onClick={() =>
                         label === "朋友圈"
-                          ? setMoments(true)
+                          ? setMoments("album")
                           : setUtility(String(label))
                       }
                     >
@@ -567,7 +612,7 @@ export function WeChatSkin(props: SkinProps) {
                 })}
               </div>
               {p.items
-                .filter((i) => i.folder === "我")
+                .filter((i) => i.folder === "我" && i !== coverItem)
                 .map((i) => (
                   <button
                     className="wx-discovery"
