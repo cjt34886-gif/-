@@ -977,3 +977,25 @@
   color: #304e39;
   font-weight: 600;
 }
+.weibo-photo-slot {
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  background: #eef0f2;
+  color: #636870;
+}
+.weibo-photo-viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  width: 100%;
+  background: #000;
+}
+.weibo-photo-viewer img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.weibo-comment-profile {
+  font-weight: 600;
+}

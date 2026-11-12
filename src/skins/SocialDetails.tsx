@@ -30,6 +30,7 @@ export function SocialDetail(p: {
   app: string;
   item: Item;
   back: () => void;
+  onProfile?: (name: string, from: Item) => void;
   owner: string;
   ui?: Record<string, UiValue>;
   onUi?: (key: string, value: UiValue) => void;
@@ -50,6 +51,7 @@ export function SocialDetail(p: {
     [menu, setMenu] = useState(false),
     [sort, setSort] = useState(false),
     [copied, setCopied] = useState(false);
+  const [photoOpen, setPhotoOpen] = useState(false);
   const readOnly = weibo && item.meta.readOnly === "true";
   const comments = readOnly ? item.comments : [...item.comments, ...extra],
     replies = sort ? [...comments].reverse() : comments;
@@ -153,7 +155,17 @@ export function SocialDetail(p: {
         </div>
         <div className="post-detail-body">
           <RichText value={item.richText} fallback={item.body} />
-          {item.media && <Media item={item} />}
+          {item.meta.photoSlot ? (
+            item.media ? (
+              <button aria-label="放大照片" onClick={() => setPhotoOpen(true)}>
+                <Media item={item} />
+              </button>
+            ) : (
+              <span className="weibo-photo-slot">照片待上传</span>
+            )
+          ) : (
+            item.media && <Media item={item} />
+          )}
         </div>
         {readOnly ? null : weibo ? (
           <div className="weibo-share-options">
@@ -226,9 +238,27 @@ export function SocialDetail(p: {
                 body = hasName ? c.slice(split + 1) : c;
               return (
                 <article key={index} className="post-detail-comment">
-                  <Avatar name={name} />
+                  {name === item.meta.publicCommentProfile && p.onProfile ? (
+                    <button
+                      aria-label={`查看 ${name} 的主页`}
+                      onClick={() => p.onProfile?.(name, item)}
+                    >
+                      <Avatar name={name} />
+                    </button>
+                  ) : (
+                    <Avatar name={name} />
+                  )}
                   <div>
-                    <strong>{name}</strong>
+                    {name === item.meta.publicCommentProfile && p.onProfile ? (
+                      <button
+                        className="weibo-comment-profile"
+                        onClick={() => p.onProfile?.(name, item)}
+                      >
+                        {name}
+                      </button>
+                    ) : (
+                      <strong>{name}</strong>
+                    )}
                     <p>{body}</p>
                     {!readOnly && (
                       <div className="post-comment-actions">
@@ -261,6 +291,15 @@ export function SocialDetail(p: {
           </p>
         )}
       </div>
+      {photoOpen && (
+        <button
+          className="weibo-photo-viewer"
+          aria-label="关闭大图"
+          onClick={() => setPhotoOpen(false)}
+        >
+          <Media item={item} />
+        </button>
+      )}
       {!readOnly && (
         <form
           className="post-detail-reply"

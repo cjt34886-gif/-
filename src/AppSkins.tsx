@@ -47,6 +47,8 @@ export type SkinProps = {
   wechatId?: string;
   friendRequest?: Item;
   notificationDestination?: BannerDestination;
+  publicProfile?: string;
+  onClosePublicProfile?: () => void;
   publishedWeiboPosts?: ReadonlySet<string>;
   contacts?: Item[];
   virtualTime?: string;

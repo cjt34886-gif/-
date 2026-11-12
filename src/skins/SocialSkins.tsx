@@ -5,6 +5,7 @@ import {
   AtSign,
   Bookmark,
   Camera,
+  ChevronLeft,
   ChevronRight,
   Grid,
   Hash,
@@ -102,23 +103,47 @@ export function WeiboSkin(p: Props) {
       : feed === "全部"
         ? items
         : items.filter((i) => i.folder === feed);
-  const list = [...selected].sort((a, b) => b.time.localeCompare(a.time));
+  const publicPosts = p.items.filter(
+    (item) =>
+      item.sender === p.publicProfile && item.meta.publicProfile === "true",
+  );
+  const list = [...(p.publicProfile ? publicPosts : selected)].sort((a, b) =>
+    b.time.localeCompare(a.time),
+  );
   return (
     <div className="catalog-skin weibo-ui">
-      <Header p={p} />
-      <div className="weibo-sections">
-        {["关注", "发现", "我"].map((t) => (
-          <button
-            key={t}
-            className={tab === t ? "selected" : ""}
-            onClick={() => setTab(t)}
-          >
-            {t}
+      {p.publicProfile ? (
+        <header className="app-nav">
+          <button aria-label="返回" onClick={p.onClosePublicProfile}>
+            <ChevronLeft size={23} />
           </button>
-        ))}
-      </div>
+          <strong>{p.publicProfile}</strong>
+          <span />
+        </header>
+      ) : (
+        <Header p={p} />
+      )}
+      {!p.publicProfile && (
+        <div className="weibo-sections">
+          {["关注", "发现", "我"].map((t) => (
+            <button
+              key={t}
+              className={tab === t ? "selected" : ""}
+              onClick={() => setTab(t)}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="catalog-scroll">
-        {tab === "我" ? (
+        {p.publicProfile ? (
+          <div className="weibo-profile">
+            <Avatar name={p.publicProfile} src={publicPosts[0]?.avatar} />
+            <h2>{p.publicProfile}</h2>
+            <span>{publicPosts.length} 条微博</span>
+          </div>
+        ) : tab === "我" ? (
           <div className="weibo-profile">
             <Avatar
               name={profile?.sender ?? p.owner ?? "我"}
@@ -146,7 +171,13 @@ export function WeiboSkin(p: Props) {
             <PostHeader p={p} item={i} />
             <button className="social-body" onClick={() => p.onItem(i)}>
               <p>{i.body}</p>
-              {i.media && <Media item={i} />}
+              {i.media ? (
+                <Media item={i} />
+              ) : (
+                i.meta.photoSlot && (
+                  <span className="weibo-photo-slot">照片待上传</span>
+                )
+              )}
             </button>
             <WeiboActions p={p} item={i} />
           </article>

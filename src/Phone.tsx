@@ -398,6 +398,7 @@ function PhoneRuntime({
         "thread" in target && view?.thread === target.thread;
       const currentPost = "post" in target && view?.detail?.id === target.post;
       const sameSender =
+        !notice.storyTime &&
         "thread" in target &&
         [...storyQueue, ...queued].some(
           (entry) =>
@@ -444,16 +445,13 @@ function PhoneRuntime({
       changed = true;
     }
     for (const post of work.data.weibo ?? []) {
-      const trigger = post.meta.afterStoryMessage;
+      const trigger = post.meta.afterStoryMessage || post.meta.afterStoryPost;
       const completedAt = checkpoints[trigger];
-      if (
-        typeof completedAt === "number" &&
-        (current.elapsedMs ?? 0) - completedAt >= 5000 &&
-        clock < post.time
-      ) {
-        clock = post.time;
-        changed = true;
-      }
+      if (typeof completedAt !== "number" || post.id in checkpoints) continue;
+      if ((current.elapsedMs ?? 0) - completedAt < 5000) continue;
+      clock = clock > post.time ? clock : post.time;
+      checkpoints[post.id] = current.elapsedMs ?? 0;
+      changed = true;
     }
     if (changed) {
       const [date, time] = clock.split(" ");
@@ -919,25 +917,11 @@ function PhoneRuntime({
               <StoryBanner
                 key={storyBanner.id}
                 icon={
-                  storyBanner.avatar && safeMedia(storyBanner.avatar) ? (
-                    <img
-                      className="story-banner-avatar"
-                      src={safeMedia(storyBanner.avatar)}
-                      alt=""
-                    />
-                  ) : storyBanner.sender &&
-                    "thread" in storyBanner.destination ? (
-                    <span className="story-banner-avatar story-banner-initial">
-                      {storyBanner.sender.slice(0, 1)}
-                    </span>
-                  ) : (
-                    <AppIcon
-                      id={storyBanner.source ?? storyBanner.destination.app}
-                      small
-                    />
-                  )
+                  <AppIcon
+                    id={storyBanner.source ?? storyBanner.destination.app}
+                    small
+                  />
                 }
-                sender={storyBanner.sender}
                 name={
                   storyBanner.source === "calendar"
                     ? "日历"
@@ -964,7 +948,7 @@ function PhoneRuntime({
                 key={banner}
                 icon={<AppIcon id={legacyBanner.appId} small />}
                 name={legacyBanner.title}
-                text={legacyBanner.body}
+                text={`${legacyBanner.title}有新消息`}
                 onDismiss={() => setBanner("")}
                 onOpen={() => {
                   setBanner("");
@@ -1166,6 +1150,18 @@ function AppContent({
   onUi?: (key: string, value: UiValue) => void;
   work: Work;
 }) {
+  const [publicProfile, setPublicProfile] = useState("");
+  const [profileReturn, setProfileReturn] = useState<Item | null>(null);
+  const openProfile = (name: string, from: Item) => {
+    setPublicProfile(name);
+    setProfileReturn(from);
+    setDetail(null);
+  };
+  const closeProfile = () => {
+    setPublicProfile("");
+    setDetail(profileReturn);
+    setProfileReturn(null);
+  };
   const [detail, setDetail] = useState<Item | null>(
     initialView?.detail ?? null,
   );
@@ -1181,7 +1177,9 @@ function AppContent({
     .filter((item) => {
       const prerequisite =
         app.id === "weibo" &&
-        (item.meta.afterWechatReplies || item.meta.afterStoryMessage);
+        (item.meta.afterWechatReplies ||
+          item.meta.afterStoryMessage ||
+          item.meta.afterStoryPost);
       if (creator || !prerequisite) return true;
       return weiboPostPublished(item, state);
     })
@@ -1216,6 +1214,8 @@ function AppContent({
     if ("post" in destination) {
       const item = shown.find((item) => item.id === destination.post);
       if (!item) return;
+      setPublicProfile("");
+      setProfileReturn(null);
       read(item);
     } else {
       setDetail(null);
@@ -1308,6 +1308,8 @@ function AppContent({
               wechatId={work.phone.wechatId}
               friendRequest={friendRequest}
               notificationDestination={destination}
+              publicProfile={publicProfile}
+              onClosePublicProfile={closeProfile}
               publishedWeiboPosts={
                 app.id === "wechat"
                   ? new Set(
@@ -1342,6 +1344,7 @@ function AppContent({
               app={app.id}
               item={detail}
               back={back}
+              onProfile={openProfile}
               owner={work.phone.owner}
               ui={state.ui?.[app.id]}
               onUi={onUi}

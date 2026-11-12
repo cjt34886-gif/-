@@ -21,7 +21,7 @@ export type StoryNotice = {
 };
 
 export function weiboPostPublished(item: Item, state: Runtime) {
-  const afterMessage = item.meta.afterStoryMessage;
+  const afterMessage = item.meta.afterStoryMessage || item.meta.afterStoryPost;
   if (afterMessage)
     return (
       typeof state.ui?.storyClock?.[afterMessage] === "number" &&
@@ -68,9 +68,8 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
       id: item.id,
       storyTime: item.meta.advanceStoryClock === "true" ? item.time : undefined,
       at,
-      text: reminder || item.meta.bannerBody || item.body,
+      text: reminder ? "日历有新提醒" : `${thread}有新消息`,
       source: reminder ? "calendar" : undefined,
-      sender: reminder ? undefined : thread,
       avatar,
       quiet,
       destination: { app: "wechat", thread },
@@ -131,8 +130,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
     notices.push({
       id: request.id,
       at,
-      text: "请求添加你为朋友",
-      sender: nickname,
+      text: `${nickname}有新消息`,
       avatar: request.avatar,
       destination: { app: "wechat", requests: true },
       unread: !accepted && ui[request.id + ":seen"] !== true,
@@ -189,8 +187,7 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
     notices.push({
       id: item.id,
       at: 0,
-      text: item.meta.bannerBody,
-      sender: item.sender,
+      text: `${item.sender}有新动态`,
       avatar: item.avatar,
       destination: { app: "weibo", post: item.id },
       unread: !state.read.includes(item.id),
