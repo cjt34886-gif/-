@@ -15,7 +15,6 @@ import {
   User,
   Users,
   Share2,
-  ThumbsUp,
 } from "lucide-react";
 import { useState } from "react";
 import type { Item } from "../schema";
@@ -67,24 +66,6 @@ function PostHeader({ item, p }: { item: Item; p: Props }) {
 }
 function WeiboActions({ p, item }: { p: Props; item: Item }) {
   const [liked, setLiked] = useSkinState<boolean>(p, `liked-${item.id}`, false);
-  if (item.meta.readOnly === "true") {
-    return (
-      <div className="social-actions weibo-actions">
-        <span aria-label="转发">
-          <Share2 size={17} />
-          {meta(item, "reposts")}
-        </span>
-        <button aria-label={`评论${item.title}`} onClick={() => p.onItem(item)}>
-          <MessageCircle size={17} />
-          {item.comments.length || "评论"}
-        </button>
-        <span aria-label="点赞">
-          <ThumbsUp size={17} />
-          {item.likes || "赞"}
-        </span>
-      </div>
-    );
-  }
   return (
     <div className="social-actions weibo-actions">
       <button aria-label={`转发${item.title}`} onClick={() => p.onItem(item)}>
@@ -100,8 +81,12 @@ function WeiboActions({ p, item }: { p: Props; item: Item }) {
         aria-pressed={liked}
         onClick={() => setLiked(!liked)}
       >
-        <ThumbsUp size={17} fill={liked ? "currentColor" : "none"} />
-        {item.likes + (liked ? 1 : 0) || "赞"}
+        <Heart
+          size={17}
+          fill={liked ? "#e64857" : "none"}
+          color={liked ? "#e64857" : undefined}
+        />
+        {item.likes + Number(liked)}
       </button>
     </div>
   );

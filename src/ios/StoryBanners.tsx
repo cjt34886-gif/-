@@ -127,6 +127,11 @@ export function storyNotices(work: Work, state: Runtime): StoryNotice[] {
     );
     for (const [index, item] of dialogue.entries()) {
       if (item.outgoing) {
+        const startAfter = Number(item.meta.startAfterMs);
+        if (item.meta.advanceStoryClock === "true") {
+          const at = startAfter ? replyAt + startAfter : Number(times[round]);
+          if (at) message(item, thread, at, false);
+        }
         replyAt = Number(times[round++]);
         if (!replyAt) break;
       } else {

@@ -675,6 +675,16 @@ function PhoneRuntime({
                   onSettings={onSettings}
                   onUi={(key, value) => {
                     const current = runtimeRef.current;
+                    if (app === "weibo" && key.startsWith("liked-")) {
+                      update({
+                        ...current,
+                        ui: {
+                          ...current.ui,
+                          weibo: { ...current.ui?.weibo, [key]: value },
+                        },
+                      });
+                      return;
+                    }
                     update(
                       dispatch(
                         work,

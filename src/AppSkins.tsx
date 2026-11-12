@@ -335,6 +335,11 @@ export function WeChatSkin(props: SkinProps) {
   let friendReply: string | undefined;
   for (const item of friendScript) {
     if (item.outgoing) {
+      const startAt = Number(item.meta.startAfterMs);
+      if (startAt && lastReplyAt + startAt > now) {
+        nextDue = lastReplyAt + startAt;
+        break;
+      }
       lastReplyAt = Number(friendReplies[replyIndex++]);
       if (!lastReplyAt) {
         friendReply = item.body;

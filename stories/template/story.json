@@ -617,6 +617,24 @@
           "readOnly": "true",
           "afterStoryMessage": "muaaa-dinner-chat-21"
         }
+      },
+      {
+        "id": "yibei-office-wall",
+        "title": "有点奇怪",
+        "sender": "宜北校园墙",
+        "time": "2026-09-10 08:17",
+        "kind": "post",
+        "body": "昨天晚上在学生会办公室楼下看到一个男生等人，等了好久，结果出来的居然是付会长？？？\n\n是上次操场那个男生吗，我有点脸盲但感觉好像是同一个人",
+        "comments": [
+          "同学A：又是他俩哈哈哈哈",
+          "同学B：付会长最近出镜率有点高",
+          "同学C：那个男生是高二新转来的吧",
+          "同学D：我昨天也看到了，确实等了挺久"
+        ],
+        "meta": {
+          "afterStoryMessage": "muaaa-segment-13-23",
+          "readOnly": "true"
+        }
       }
     ],
     "redbook": [
@@ -1723,6 +1741,820 @@
           "friendDialogue": "muaaa-friend-request",
           "delayMs": "7500",
           "advanceStoryClock": "true",
+          "resumeNormalComposer": "true"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "言言",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "13000",
+          "afterWeiboPost": "ybf-post-6",
+          "advanceStoryClock": "true"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "昨天的饭钱还没给你呢",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "14000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "不用了",
+        "time": "2026-09-08 12:06",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那怎么行",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你还专门跑了一趟",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "顺路",
+        "time": "2026-09-08 12:06",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "可是你昨天不是从教学楼那边过来的吗",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "...",
+        "time": "2026-09-08 12:06",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "哈哈哈哈哈",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "好吧好吧",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-11",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那我下次请你吃饭",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "3000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-12",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "再说吧",
+        "time": "2026-09-08 12:06",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-13",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你这算答应了吧😼",
+        "time": "2026-09-08 12:06",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-11-14",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "随你",
+        "time": "2026-09-08 12:06",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你们足球队的宣传资料交了吗",
+        "time": "2026-09-09 16:43",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0",
+          "advanceStoryClock": "true",
+          "startAfterMs": "5000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "啊",
+        "time": "2026-09-09 16:43",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "什么资料",
+        "time": "2026-09-09 16:43",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "社团展示的",
+        "time": "2026-09-09 16:43",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "等等我问问",
+        "time": "2026-09-09 16:43",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "问到了！",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "5000",
+          "advanceStoryClock": "true"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "他们说还没弄完",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "6000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "言言你是不是很急",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "7000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "明天下午截止",
+        "time": "2026-09-09 16:45",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那还好",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-11",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你们最好今天弄完",
+        "time": "2026-09-09 16:45",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-12",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "收到付会长🫡",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-13",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "别贫",
+        "time": "2026-09-09 16:45",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-14",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "哈哈哈哈哈",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-12-15",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我去帮他们弄",
+        "time": "2026-09-09 16:45",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "言言",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "7500",
+          "advanceStoryClock": "true"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你还在学校吗",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "8500"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "在",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你怎么还没走",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "有点事",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学生会的？",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "嗯",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我刚把材料弄完",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "现在准备回去了",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你在哪",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "3000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-11",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "学生会办公室",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-12",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那我过去找你",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-13",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "找我干什么",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-14",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "一起走啊",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-15",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "不顺路",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-16",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你怎么知道我住哪栋宿舍",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-17",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "...",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-18",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "哈哈哈哈哈",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-19",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我在楼下等你",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-20",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我还没忙完",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-21",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "没事",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-22",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我又不着急😺",
+        "time": "2026-09-09 19:37",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-13-23",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "随你",
+        "time": "2026-09-09 19:37",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0",
+          "advanceStoryClock": "true"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-1",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "言言",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "12000",
+          "advanceStoryClock": "true",
+          "afterWeiboPost": "yibei-office-wall"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-2",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "我们又上校园墙了哈哈哈哈",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "13000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-3",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "看到了",
+        "time": "2026-09-10 12:32",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-4",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "怎么每次跟你待一起都能被拍",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-5",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "你问我？",
+        "time": "2026-09-10 12:32",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-6",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "哈哈哈哈哈",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-7",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那我下次注意点",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-8",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "注意什么",
+        "time": "2026-09-10 12:32",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-9",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "不让他们拍到啊",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-10",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "没必要",
+        "time": "2026-09-10 12:32",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-11",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "嗯？",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-12",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "又没什么不能见人的",
+        "time": "2026-09-10 12:32",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-13",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "也是",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "1000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-14",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "那下次还一起走😸",
+        "time": "2026-09-10 12:32",
+        "outgoing": false,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "2000"
+        }
+      },
+      {
+        "id": "muaaa-segment-15-15",
+        "title": "穆瑞恩",
+        "folder": "好友剧情",
+        "body": "...",
+        "time": "2026-09-10 12:32",
+        "outgoing": true,
+        "meta": {
+          "friendDialogue": "muaaa-friend-request",
+          "delayMs": "0",
           "resumeNormalComposer": "true"
         }
       }

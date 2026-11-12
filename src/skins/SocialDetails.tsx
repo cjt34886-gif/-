@@ -177,7 +177,7 @@ export function SocialDetail(p: {
         )}
         {weibo ? (
           <div className="weibo-detail-tabs">
-            {["转发", "评论", "赞"].map((name) => (
+            {["转发", "评论"].map((name) => (
               <button
                 key={name}
                 aria-pressed={tab === name}
@@ -186,11 +186,21 @@ export function SocialDetail(p: {
                 {name}{" "}
                 {name === "评论"
                   ? count(comments.length)
-                  : name === "赞"
-                    ? count(item.likes + (liked ? 1 : 0))
-                    : meta(item, "reposts", "0")}
+                  : meta(item, "reposts", "0")}
               </button>
             ))}
+            <button
+              aria-label="喜欢帖子"
+              aria-pressed={liked}
+              onClick={() => setLiked(!liked)}
+            >
+              <Heart
+                size={17}
+                fill={liked ? "#e64857" : "none"}
+                color={liked ? "#e64857" : undefined}
+              />
+              {item.likes + Number(liked)}
+            </button>
           </div>
         ) : (
           <div className="x-related-row">
