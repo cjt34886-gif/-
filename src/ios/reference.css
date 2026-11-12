@@ -269,7 +269,9 @@
 .ios18 .wechat-ui .wx-discover-groups > .wx-discovery {
   margin-bottom: 8px;
 }
-.ios18 .wechat-ui[data-tab="我"][data-moments="false"]:not([data-thread="true"]) .wx-nav {
+.ios18
+  .wechat-ui[data-tab="我"][data-moments="false"]:not([data-thread="true"])
+  .wx-nav {
   visibility: hidden;
   border: 0;
   background: #fff;
@@ -820,4 +822,19 @@
 }
 .ios18 .wx-scripted-keyboard .keyboard-row {
   margin-bottom: 8px;
+}
+
+.ios18 .wechat-ui .wx-message-arriving {
+  animation: wx-message-arrive 180ms ease-out both;
+}
+@keyframes wx-message-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ios18 .wechat-ui .wx-message-arriving {
+    animation: none;
+  }
 }

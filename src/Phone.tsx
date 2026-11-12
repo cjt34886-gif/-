@@ -203,9 +203,25 @@ function PhoneRuntime({
       .get(work.id)
       .then((saved) => {
         if (!active) return;
-        if (saved && saved.state.revision === work.updatedAt)
-          setOwn(saved.state);
-        else {
+        if (saved && saved.state.revision === work.updatedAt) {
+          const conversation = work.data.wechat?.find(
+            (item) => item.meta.scriptedFollowup === "true",
+          )?.meta.conversationId;
+          const state = saved.state;
+          const wechat = state.ui?.wechat;
+          // Older saves recorded the second reply as -1 without a timestamp.
+          setOwn(
+            conversation && wechat?.[conversation] === -1
+              ? {
+                  ...state,
+                  ui: {
+                    ...state.ui,
+                    wechat: { ...wechat, [conversation]: -Date.now() },
+                  },
+                }
+              : state,
+          );
+        } else {
           setOwn(dispatch(work, initialRuntime(work), "start"));
           if (saved) setLoadError("作品已更新，已开始新的进度。");
         }

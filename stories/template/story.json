@@ -296,6 +296,28 @@
           "meta": {
             "scriptedReply": "true"
           }
+        },
+        {
+          "id": "qian-assignment-6",
+          "senderId": "director-qian",
+          "body": "那你十点到教务处来一趟，我介绍你们认识。",
+          "time": "2026-09-04 09:15",
+          "read": false,
+          "meta": {
+            "scriptedReply": "true",
+            "scriptedFollowup": "true"
+          }
+        },
+        {
+          "id": "qian-assignment-7",
+          "senderId": "director-qian",
+          "body": "辛苦了。",
+          "time": "2026-09-04 09:16",
+          "read": false,
+          "meta": {
+            "scriptedReply": "true",
+            "scriptedFollowup": "true"
+          }
         }
       ]
     }

@@ -99,6 +99,7 @@ function MessageList({
   onRead,
   whatsapp = false,
   follow = false,
+  animatedId,
 }: {
   items: Item[];
   creator: boolean;
@@ -106,6 +107,7 @@ function MessageList({
   onRead: (id: string) => void;
   whatsapp?: boolean;
   follow?: boolean;
+  animatedId?: string;
 }) {
   const scroll = useRef<HTMLDivElement>(null);
   const latest = items.at(-1)?.id;
@@ -129,7 +131,7 @@ function MessageList({
       {items.map((i) => (
         <div
           key={i.id}
-          className={`skin-message ${i.outgoing ? "outgoing" : ""}`}
+          className={`skin-message ${i.outgoing ? "outgoing" : ""} ${i.id === animatedId ? "wx-message-arriving" : ""}`}
         >
           {!whatsapp && !i.outgoing && (
             <Avatar name={i.sender} src={i.avatar} neutral={follow} />
@@ -185,30 +187,34 @@ export function WeChatSkin(props: SkinProps) {
   const storyKey = script[0]?.meta.conversationId ?? "scriptedReply";
   const [sentAt, setSentAt] = useSkinState<number>(props, storyKey, 0);
   const [now, setNow] = useState(Date.now);
-  const firstArrival = sentAt + 1000;
+  const hasFollowup = script.some(
+    (item) => item.meta.scriptedFollowup === "true",
+  );
+  const followupStarted = hasFollowup && sentAt < -1;
+  const started = Math.abs(sentAt);
+  const firstArrival = started + 1000;
   const secondArrival = firstArrival + 1500;
   useEffect(() => {
-    if (sentAt <= 0) return;
-    const timers = [firstArrival, secondArrival].map((arrival) =>
-      window.setTimeout(
-        () => setNow(Date.now()),
-        Math.max(0, arrival - Date.now()),
-      ),
-    );
+    if (sentAt <= 0 && !followupStarted) return;
+    const timers = [firstArrival, secondArrival]
+      .filter((arrival) => arrival > Date.now())
+      .map((arrival) =>
+        window.setTimeout(() => setNow(Date.now()), arrival - Date.now()),
+      );
     return () => timers.forEach(window.clearTimeout);
-  }, [sentAt, firstArrival, secondArrival]);
-  const elapsed = Math.max(now, sentAt);
+  }, [sentAt, followupStarted, firstArrival, secondArrival]);
+  const elapsed = Math.max(now, started);
+  const arrivals =
+    Number(elapsed >= firstArrival) + Number(elapsed >= secondArrival);
+  const followupCount = followupStarted ? arrivals : 0;
   const visibleCount =
-    sentAt === -1
-      ? 5
-      : sentAt === 0
-        ? 1
-        : elapsed >= secondArrival
-          ? 4
-          : elapsed >= firstArrival
-            ? 3
-            : 2;
+    sentAt < 0 ? 5 + followupCount : sentAt === 0 ? 1 : 2 + arrivals;
   const scriptedThread = !!script.length && props.thread === script[0].title;
+  const [seenFollowup, setSeenFollowup] = useSkinState<number>(
+    props,
+    storyKey + ":seenFollowup",
+    0,
+  );
   const reply =
     scriptedThread && script[visibleCount]?.outgoing
       ? script[visibleCount].body
@@ -240,6 +246,16 @@ export function WeChatSkin(props: SkinProps) {
     "readThreads",
     [],
   );
+  const viewingScript = scriptedThread && !utility;
+  useEffect(() => {
+    if (viewingScript && followupCount > seenFollowup)
+      setSeenFollowup(followupCount);
+  }, [viewingScript, followupCount, seenFollowup, setSeenFollowup]);
+  const recentArrival = followupCount === 1 ? firstArrival : secondArrival;
+  const animatedId =
+    followupCount && elapsed - recentArrival < 300
+      ? script[visibleCount - 1]?.id
+      : undefined;
   const conversations = [
     ...new Set(
       p.items
@@ -393,6 +409,7 @@ export function WeChatSkin(props: SkinProps) {
             onItem={p.onItem}
             onRead={p.onRead}
             follow={scriptedThread}
+            animatedId={animatedId}
           />
           {scriptedThread ? (
             <ScriptedWeChatComposer
@@ -400,7 +417,9 @@ export function WeChatSkin(props: SkinProps) {
               onSend={() => {
                 const timestamp = Date.now();
                 setNow(timestamp);
-                setSentAt(sentAt === 0 ? timestamp : -1);
+                setSentAt(
+                  sentAt === 0 ? timestamp : hasFollowup ? -timestamp : -1,
+                );
               }}
             />
           ) : (
@@ -481,6 +500,18 @@ export function WeChatSkin(props: SkinProps) {
                 .map((t) => {
                   const list = p.items.filter((i) => i.title === t),
                     last = list.at(-1)!;
+                  const unread =
+                    t === script[0]?.title
+                      ? Math.max(0, followupCount - seenFollowup) +
+                        Number(
+                          !readThreads.includes(t) &&
+                            seenFollowup === 0 &&
+                            sentAt === 0 &&
+                            !list[0].read,
+                        )
+                      : readThreads.includes(t)
+                        ? 0
+                        : list.filter((i) => !i.read).length;
                   return (
                     <button
                       className="wx-chat-row"
@@ -501,12 +532,7 @@ export function WeChatSkin(props: SkinProps) {
                           }
                           neutral={!!last.meta.scriptedReply}
                         />
-                        {!readThreads.includes(t) &&
-                          list.some((i) => !i.read) && (
-                            <b className="wx-unread">
-                              {list.filter((i) => !i.read).length}
-                            </b>
-                          )}
+                        {unread > 0 && <b className="wx-unread">{unread}</b>}
                       </span>
                       <div>
                         <strong>{t}</strong>
