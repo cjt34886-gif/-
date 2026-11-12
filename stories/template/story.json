@@ -526,7 +526,8 @@
           "reposts": "2",
           "afterWechatReplies": "muaaa-friend-request:replies",
           "requiredReplies": "5",
-          "readOnly": "true"
+          "readOnly": "true",
+          "bannerBody": "微博有新消息"
         },
         "comments": [
           "今天也不想早起：等等？？付会长周末居然会去操场？？？",

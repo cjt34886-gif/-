@@ -1,3 +1,10 @@
+import {
+  StoryBanner,
+  storyNotices,
+  weiboPostPublished,
+  type BannerDestination,
+  type StoryNotice,
+} from "./ios/StoryBanners";
 import { StatusGlyph } from "./ios/StatusGlyph";
 import { SocialDetail, socialDetailApps } from "./skins/SocialDetails";
 import { NativeCalculator } from "./ios/Calculator";
@@ -35,6 +42,7 @@ import { WeChatSkin, WhatsAppSkin } from "./AppSkins";
 import { RichText } from "./RichText";
 import {
   useEffect,
+  useLayoutEffect,
   useState,
   useRef,
   Suspense,
@@ -79,7 +87,7 @@ export function AppIcon({
   custom?: string;
   date?: string;
   time?: string;
-  badge?: boolean;
+  badge?: boolean | number;
 }) {
   const a = getApp(id);
   const Icon = a.icon;
@@ -99,8 +107,11 @@ export function AppIcon({
         )}
       </span>
       {badge && (
-        <span className="app-friend-badge" aria-label="1 条新好友申请">
-          1
+        <span
+          className="app-friend-badge"
+          aria-label={`${badge === true ? 1 : badge} 条未读通知`}
+        >
+          {badge === true ? 1 : badge}
         </span>
       )}
       {name && <span className="app-name">{name}</span>}
@@ -148,6 +159,16 @@ function PhoneRuntime({
   const [recent, setRecent] = useState<string[]>([]);
   const appSnapshots = useRef(new Map<string, HTMLElement>());
   const [banner, setBanner] = useState("");
+  const [storyQueue, setStoryQueue] = useState<StoryNotice[]>([]);
+  const [noticeClock, setNoticeClock] = useState(Date.now);
+  const [destination, setDestination] = useState<BannerDestination>();
+  const views = useRef(
+    new Map<string, { thread: string; detail: Item | null }>(),
+  );
+  const existingSave = useRef(false);
+  const handled = useRef<Set<string> | null>(null);
+  const queuedIds = useRef(new Set<string>());
+
   const noticesSeen = useRef(0);
   const [contextApp, setContextApp] = useState("");
   const [deviceScale, setDeviceScale] = useState(0.84);
@@ -220,8 +241,6 @@ function PhoneRuntime({
     requestDue && Math.max(requestClock, Date.now()) >= requestDue
       ? configuredRequest
       : undefined;
-  const unreadFriendRequest =
-    !!friendRequest && !s.ui?.wechat?.[friendRequest.id + ":seen"];
 
   const runtimeRef = useRef(s);
   runtimeRef.current = s;
@@ -241,6 +260,7 @@ function PhoneRuntime({
           const conversation = work.data.wechat?.find(
             (item) => item.meta.scriptedFollowup === "true",
           )?.meta.conversationId;
+          existingSave.current = true;
           const state = saved.state;
           const wechat = state.ui?.wechat;
           // Older saves recorded the second reply as -1 without a timestamp.
@@ -315,8 +335,9 @@ function PhoneRuntime({
     for (const id of appSnapshots.current.keys())
       if (!recent.includes(id) && id !== app) appSnapshots.current.delete(id);
   };
-  const open = (id: string) => {
+  const open = (id: string, target?: BannerDestination) => {
     if (!work.apps.some((a) => a.id === id && a.installed)) return;
+    setDestination(target);
     setApp(id);
     setKeyboard(false);
     setRecent((v) => [id, ...v.filter((a) => a !== id)].slice(0, 8));
@@ -340,18 +361,110 @@ function PhoneRuntime({
   useEffect(() => {
     if (app && !work.apps.some((a) => a.id === app && a.installed)) setApp("");
   }, [app, work.apps]);
+  const notifications = creator ? [] : storyNotices(work, s);
+  const notificationNow = Math.max(noticeClock, Date.now());
+  const nextNoticeAt = notifications.find(
+    (notice) => notice.at > notificationNow,
+  )?.at;
+  useEffect(() => {
+    if (!ready || !nextNoticeAt) return;
+    const timer = window.setTimeout(
+      () => setNoticeClock(Math.max(nextNoticeAt, Date.now())),
+      Math.max(0, nextNoticeAt - Date.now()),
+    );
+    return () => window.clearTimeout(timer);
+  }, [ready, nextNoticeAt]);
+  useEffect(() => {
+    if (!ready || creator) return;
+    const current = runtimeRef.current;
+    const arrived = storyNotices(work, current).filter(
+      (notice) => notice.at <= Math.max(noticeClock, Date.now()),
+    );
+    const saved = current.ui?.systemBanners?.handled;
+    if (!handled.current) {
+      handled.current = new Set(Array.isArray(saved) ? saved : []);
+      if (existingSave.current && !Array.isArray(saved))
+        arrived.forEach((notice) => handled.current!.add(notice.id));
+    }
+    const seen = handled.current;
+    const fresh = arrived.filter(
+      (notice) => !seen.has(notice.id) && !queuedIds.current.has(notice.id),
+    );
+    const queued: StoryNotice[] = [];
+    for (const notice of fresh) {
+      const target = notice.destination;
+      const view = app === target.app ? views.current.get(app) : undefined;
+      const currentThread =
+        "thread" in target && view?.thread === target.thread;
+      const currentPost = "post" in target && view?.detail?.id === target.post;
+      const sameSender =
+        "thread" in target &&
+        [...storyQueue, ...queued].some(
+          (entry) =>
+            "thread" in entry.destination &&
+            entry.destination.thread === target.thread,
+        );
+      if (
+        !notice.unread ||
+        currentThread ||
+        currentPost ||
+        sameSender ||
+        !work.apps.some((item) => item.id === target.app && item.installed)
+      ) {
+        seen.add(notice.id);
+      } else {
+        queued.push(notice);
+        queuedIds.current.add(notice.id);
+      }
+    }
+    if (!Array.isArray(saved) || saved.length !== seen.size) {
+      update({
+        ...current,
+        ui: { ...current.ui, systemBanners: { handled: [...seen] } },
+      });
+    }
+    if (queued.length) setStoryQueue((previous) => [...previous, ...queued]);
+  }, [ready, creator, s, work, app, noticeClock, storyQueue]);
+  const storyBanner = locked ? undefined : storyQueue[0];
+  useEffect(() => {
+    if (!storyBanner) return;
+    const seen = handled.current;
+    if (seen && !seen.has(storyBanner.id)) {
+      seen.add(storyBanner.id);
+      queuedIds.current.delete(storyBanner.id);
+      const current = runtimeRef.current;
+      update({
+        ...current,
+        ui: { ...current.ui, systemBanners: { handled: [...seen] } },
+      });
+    }
+    const timer = window.setTimeout(
+      () => setStoryQueue((queue) => queue.slice(1)),
+      4000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [storyBanner]);
+  const unreadFor = (id: string) =>
+    notifications.filter(
+      (notice) =>
+        notice.destination.app === id &&
+        notice.unread &&
+        notice.at <= notificationNow,
+    ).length;
   const displayTime = creator ? work.phone.time : s.time || work.phone.time;
   const plugin = getApp(app);
   useEffect(() => {
     const count = s.notifications.length;
     if (!locked && work.phone.notifications && count > noticesSeen.current) {
       setBanner(s.notifications.at(-1) || "");
-      const timer = setTimeout(() => setBanner(""), 4500);
+      const timer = setTimeout(() => setBanner(""), 4000);
       noticesSeen.current = count;
       return () => clearTimeout(timer);
     }
     noticesSeen.current = count;
   }, [s.notifications.length, locked, work.phone.notifications]);
+  const legacyBanner =
+    banner && !locked ? notificationContent(banner, work.apps) : undefined;
   const dismissNotice = (index: number) =>
     update({
       ...runtimeRef.current,
@@ -509,6 +622,11 @@ function PhoneRuntime({
                   ]}
                   creator={creator}
                   state={s}
+                  destination={
+                    destination?.app === app ? destination : undefined
+                  }
+                  initialView={views.current.get(app)}
+                  onView={(view) => views.current.set(app, view)}
                   friendRequest={app === "wechat" ? friendRequest : undefined}
                   onRead={(id) => event("read", id)}
                   onEdit={(item) => onEdit?.(app, item)}
@@ -560,7 +678,9 @@ function PhoneRuntime({
                     custom={a.icon}
                     date={s.date || work.phone.date}
                     time={s.time}
-                    badge={a.id === "wechat" && !small && unreadFriendRequest}
+                    badge={
+                      !small && unreadFor(a.id) > 0 ? unreadFor(a.id) : false
+                    }
                   />
                 )}
                 clearApp={(id) =>
@@ -588,7 +708,7 @@ function PhoneRuntime({
                         id={a.id}
                         name={a.name}
                         custom={a.icon}
-                        badge={a.id === "wechat" && unreadFriendRequest}
+                        badge={unreadFor(a.id) || false}
                       />
                     </button>
                   ))}
@@ -742,24 +862,44 @@ function PhoneRuntime({
               </div>
             </div>
           )}
-          {banner && !locked && (
-            <button
-              className="device-banner"
-              onClick={() => {
-                setBanner("");
-                setPanel("notification");
-              }}
-            >
-              <AppIcon
-                id={notificationContent(banner, work.apps).appId}
-                small
+          <AnimatePresence mode="wait">
+            {storyBanner && (
+              <StoryBanner
+                key={storyBanner.id}
+                icon={<AppIcon id={storyBanner.destination.app} small />}
+                name={
+                  work.apps.find(
+                    (item) => item.id === storyBanner.destination.app,
+                  )?.name ?? getApp(storyBanner.destination.app).name
+                }
+                text={storyBanner.text}
+                onDismiss={() =>
+                  setStoryQueue((queue) =>
+                    queue.filter((item) => item.id !== storyBanner.id),
+                  )
+                }
+                onOpen={() => {
+                  setStoryQueue((queue) =>
+                    queue.filter((item) => item.id !== storyBanner.id),
+                  );
+                  open(storyBanner.destination.app, storyBanner.destination);
+                }}
               />
-              <span>
-                <strong>{notificationContent(banner, work.apps).title}</strong>
-                <span>{notificationContent(banner, work.apps).body}</span>
-              </span>
-            </button>
-          )}
+            )}
+            {!storyBanner && legacyBanner && (
+              <StoryBanner
+                key={banner}
+                icon={<AppIcon id={legacyBanner.appId} small />}
+                name={legacyBanner.title}
+                text={legacyBanner.body}
+                onDismiss={() => setBanner("")}
+                onOpen={() => {
+                  setBanner("");
+                  setPanel("notification");
+                }}
+              />
+            )}
+          </AnimatePresence>
           {panel === "switcher" && (
             <div className="device-switcher">
               <div className="switcher-cards">
@@ -925,6 +1065,9 @@ function AppContent({
   creator,
   state,
   friendRequest,
+  destination,
+  initialView,
+  onView,
   onRead,
   onEdit,
   onAdd,
@@ -939,6 +1082,9 @@ function AppContent({
   creator: boolean;
   state: Runtime;
   friendRequest?: Item;
+  destination?: BannerDestination;
+  initialView?: { thread: string; detail: Item | null };
+  onView: (view: { thread: string; detail: Item | null }) => void;
   onRead: (id: string) => void;
   onEdit: (item: Item) => void;
   onAdd: () => void;
@@ -947,8 +1093,10 @@ function AppContent({
   onUi?: (key: string, value: UiValue) => void;
   work: Work;
 }) {
-  const [detail, setDetail] = useState<Item | null>(null);
-  const [thread, setThread] = useState("");
+  const [detail, setDetail] = useState<Item | null>(
+    initialView?.detail ?? null,
+  );
+  const [thread, setThread] = useState(initialView?.thread ?? "");
   const [tab, setTab] = useState(app.tabs[0]);
   const [q, setQ] = useState("");
   const [pw, setPw] = useState("");
@@ -960,11 +1108,7 @@ function AppContent({
     .filter((item) => {
       const prerequisite = app.id === "weibo" && item.meta.afterWechatReplies;
       if (creator || !prerequisite) return true;
-      const replies = state.ui?.wechat?.[prerequisite];
-      return (
-        Array.isArray(replies) &&
-        replies.length >= Number(item.meta.requiredReplies)
-      );
+      return weiboPostPublished(item, state);
     })
     .map((item) =>
       app.id === "weibo" && item.meta.afterWechatReplies
@@ -988,6 +1132,22 @@ function AppContent({
     setDetail(i);
     if (!i.password || unlocks.includes(i.id)) onRead(i.id);
   };
+  const appliedDestination = useRef<BannerDestination | undefined>(undefined);
+  useLayoutEffect(() => {
+    onView({ thread, detail });
+  }, [thread, detail, onView]);
+  useEffect(() => {
+    if (!destination || appliedDestination.current === destination) return;
+    if ("post" in destination) {
+      const item = shown.find((item) => item.id === destination.post);
+      if (!item) return;
+      read(item);
+    } else {
+      setDetail(null);
+      setThread("thread" in destination ? destination.thread : "");
+    }
+    appliedDestination.current = destination;
+  }, [destination, shown, read]);
   const chats = [...new Set(shown.map((i) => i.title))];
   const back = () => {
     if (detail) setDetail(null);
@@ -1072,6 +1232,7 @@ function AppContent({
               wechatName={work.phone.wechatName}
               wechatId={work.phone.wechatId}
               friendRequest={friendRequest}
+              notificationDestination={destination}
               contacts={work.data.contacts?.filter(
                 (item) => item.meta.wechat === "true",
               )}

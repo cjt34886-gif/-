@@ -1,3 +1,4 @@
+import type { BannerDestination } from "./ios/StoryBanners";
 import { NativeComposer } from "./DeviceSystem";
 import { useSkinState } from "./skinState";
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -42,6 +43,7 @@ export type SkinProps = {
   wechatName?: string;
   wechatId?: string;
   friendRequest?: Item;
+  notificationDestination?: BannerDestination;
   contacts?: Item[];
   virtualTime?: string;
   name: string;
@@ -250,6 +252,19 @@ export function WeChatSkin(props: SkinProps) {
     [menu, setMenu] = useState(false),
     [searchOpen, setSearchOpen] = useState(false),
     [utility, setUtility] = useState("");
+  useEffect(() => {
+    const target = p.notificationDestination;
+    if (!target || target.app !== "wechat") return;
+    setMoments("");
+    setMenu(false);
+    setUtility("requests" in target ? "新的朋友" : "");
+    setTab("requests" in target ? "通讯录" : "微信");
+  }, [p.notificationDestination]);
+  const [seenFirstReplies, setSeenFirstReplies] = useSkinState<number>(
+    p,
+    storyKey + ":seenFirstReplies",
+    0,
+  );
   const [readThreads, setReadThreads] = useSkinState<string[]>(
     p,
     "readThreads",
@@ -260,6 +275,22 @@ export function WeChatSkin(props: SkinProps) {
     if (viewingScript && followupCount > seenFollowup)
       setSeenFollowup(followupCount);
   }, [viewingScript, followupCount, seenFollowup, setSeenFollowup]);
+  const firstReplyCount = sentAt > 0 ? Math.max(0, visibleCount - 2) : 0;
+  useEffect(() => {
+    if (viewingScript && firstReplyCount > seenFirstReplies)
+      setSeenFirstReplies(firstReplyCount);
+    if (viewingScript && script[0] && !readThreads.includes(script[0].title)) {
+      setReadThreads([...readThreads, script[0].title]);
+    }
+  }, [
+    viewingScript,
+    firstReplyCount,
+    seenFirstReplies,
+    setSeenFirstReplies,
+    script,
+    readThreads,
+    setReadThreads,
+  ]);
   const recentArrival = followupCount === 1 ? firstArrival : secondArrival;
   const animatedId =
     followupCount && elapsed - recentArrival < 300
@@ -645,6 +676,7 @@ export function WeChatSkin(props: SkinProps) {
                   const unread =
                     t === script[0]?.title
                       ? Math.max(0, followupCount - seenFollowup) +
+                        Math.max(0, firstReplyCount - seenFirstReplies) +
                         Number(
                           !readThreads.includes(t) &&
                             seenFollowup === 0 &&

@@ -934,3 +934,32 @@
 .ios18 .wechat-ui .skin-bubble {
   overflow-wrap: anywhere;
 }
+
+.ios18 .wechat-ui .wx-contact,
+.ios18 .weibo-ui .social-author {
+  justify-content: flex-start;
+  text-align: left;
+}
+.ios18 .story-banner {
+  top: 62px;
+  z-index: 90;
+  animation: none;
+  touch-action: none;
+  justify-content: flex-start;
+  background: #f3f3f6dc;
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+.ios18 .story-banner > span:last-child {
+  position: relative;
+}
+.ios18 .story-banner small {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 12px;
+  color: #64646a;
+}
+.ios18 .story-banner strong {
+  padding-right: 36px;
+}
