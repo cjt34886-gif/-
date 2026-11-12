@@ -1013,9 +1013,21 @@
   object-position: left center;
   border-radius: 6px;
 }
-.wx-group-sender {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 11px;
-  color: #4f555a;
+.ios18 .wechat-ui .skin-message[data-group-message="true"] {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 4px 12px;
 }
+.ios18 .wechat-ui [data-group-message="true"] > .skin-avatar {
+  grid-row: span 2;
+}
+.ios18 .wechat-ui [data-group-message="true"] > .skin-bubble {
+  justify-self: start;
+  max-width: min(245px, 100%);
+}
+.wx-group-sender {
+  font-size: 11px;
+  line-height: 14px;
+  color: #757575;
+}
+

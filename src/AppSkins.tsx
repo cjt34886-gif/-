@@ -150,18 +150,19 @@ function MessageList({
             <div className="wx-chat-timestamp">{i.time.slice(-5)}</div>
           )}
           <div
+            data-group-message={i.meta.storyThread === "篮球社" && !i.outgoing}
             className={`skin-message ${i.outgoing ? "outgoing" : ""} ${i.id === animatedId ? "wx-message-arriving" : ""}`}
           >
             {!whatsapp && !i.outgoing && (
               <Avatar name={i.sender} src={i.avatar} neutral={follow} />
             )}
+            {i.meta.storyThread === "篮球社" && !i.outgoing && (
+              <span className="wx-group-sender">{i.sender}</span>
+            )}
             <button
               className="skin-bubble"
               onClick={() => (creator ? onItem(i) : onRead(i.id))}
             >
-              {i.meta.storyThread === "篮球社" && (
-                <span className="wx-group-sender">{i.sender}</span>
-              )}
               {["image", "audio", "video"].includes(i.kind) ? (
                 <ItemMedia item={i} />
               ) : i.kind === "transfer" ? (
